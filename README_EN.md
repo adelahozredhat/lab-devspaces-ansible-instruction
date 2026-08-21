@@ -1,6 +1,6 @@
 # OpenShift Dev Spaces lab — Ansible
 
-Continuous guide for the four hands-on exercises. Follow the order on this page: the detailed content of each exercise is in the **README of its own repository**, not in this index.
+Continuous guide for the **four hands-on exercises** and an **extra challenge** (exercise 5). Follow the order on this page: the detailed content of each exercise is in the **README of its own repository**, not in this index.
 
 **Versión en castellano:** [README.md](README.md)
 
@@ -13,8 +13,8 @@ Each exercise is **deployed separately** in **Red Hat OpenShift Dev Spaces**: a 
 Typical flow:
 
 1. Open the lab **Dev Spaces dashboard**.
-2. **Create or start a workspace** from the Git repository of the exercise you are on (`lab-devspaces-ansible-exercise1`, then `…-exercise2`, and so on). Each repository includes its `devfile.yaml`.
-3. When the workspace is ready, open **`README.md`** (or **`README_EN.md`**) at the **root of that project**. That is the step-by-step guide.
+2. **Create or start a workspace** from the Git repository of the exercise you are on (`lab-devspaces-ansible-exercise1`, then `…-exercise2`, and so on; the extra challenge is `…-exercise5`). Each repository includes its `devfile.yaml`.
+3. When the workspace is ready, open **`README.md`** (or **`README_EN.md`**) at the **root of that project**. For exercises 1–4 that is the step-by-step guide; for exercise 5 it is the challenge requirements.
 4. When you finish, move to the next exercise by **creating another workspace** from the next repository. The teaching thread is the same (WildFly / Ansible); the development environment is **not** shared across exercises.
 
 This repository (`lab-devspaces-ansible-instruction`) is only the **lab map**. Use it for the order and the section index; the practical work happens inside each exercise workspace.
@@ -30,6 +30,7 @@ flowchart LR
   E1["Exercise 1<br/>Playbook"] --> E2["Exercise 2<br/>Roles in Git"]
   E2 --> E3["Exercise 3<br/>Collection"]
   E3 --> E4["Exercise 4<br/>Execution Environment"]
+  E4 -.-> E5["Exercise 5 extra<br/>Functional challenge"]
 ```
 
 | Order | Git repository (Dev Spaces workspace) | What you learn | Guide in that workspace |
@@ -38,6 +39,7 @@ flowchart LR
 | 2 | `lab-devspaces-ansible-exercise2` | Extract a role to its own Git repository and consume it with `requirements.yml` | `README.md` · `README_EN.md` |
 | 3 | `lab-devspaces-ansible-exercise3` | Collection structure, custom module, `ansible-test` and coverage | `README.md` · `README_EN.md` |
 | 4 | `lab-devspaces-ansible-exercise4` | Define, build and run an Execution Environment with ansible-navigator | `README.md` · `README_EN.md` |
+| Extra | `lab-devspaces-ansible-exercise5` | Challenge: analysis and development (Hello World on WildFly, collection lifecycle, team EE) | `README.md` · `README_EN.md` |
 
 **How they fit together**
 
@@ -45,6 +47,7 @@ flowchart LR
 2. In **exercise 2** you take one of those roles (e.g. `wildfly_os_deps`) into a standalone Git repo and install it with `ansible-galaxy`.
 3. In **exercise 3** you go one level up: a **collection** groups modules, roles and tests under an FQCN.
 4. In **exercise 4** you package the runtime (collections, Python, `oc`, etc.) into an **EE image** and run playbooks inside it.
+5. **Exercise 5** is **optional**: a challenge for whoever finishes the rest; there is no step-by-step recipe.
 
 Before each exercise, **create the Dev Spaces workspace** of the indicated repository (each one ships its `devfile.yaml`, unless the instructor specifies another image). The section index below matches the headings of that `README.md`.
 
@@ -204,13 +207,36 @@ You generate an EE image with `ansible-builder` and run playbooks with `ansible-
   - `test-exec-openshift.yaml`
 - Notes — Reference commands
 
-**End of the Dev Spaces lab:** you have described an EE, generated context/image and run a playbook inside that image (`--eei`).
+**End of the guided path:** you have described an EE, generated context/image and run a playbook inside that image (`--eei`). If you still have time, **exercise 5** is the extra challenge.
+
+---
+
+## Exercise 5 — Extra challenge (functional)
+
+**Optional.** Only if you have **finished exercises 1 to 4**. This is not a tutored guide: you analyse requirements and implement the solution to show what you have learned about Ansible.
+
+**Git repository / Dev Spaces workspace:** `lab-devspaces-ansible-exercise5`  
+**Full guide:** in that workspace, `README_EN.md` (English) or `README.md` (Spanish).
+
+That repository includes the **Hello World application source** (`hello-world-wildfly/`) for WildFly 39. Everything else you design yourselves on **your collection** and your own EE.
+
+### Guide index
+
+- Context
+- What this repository provides
+- Requirements (analyse and implement)
+  - 1. Extend the collection: deploy the application on WildFly
+  - 2. Collection lifecycle playbook
+  - 3. Execution Environment according to the Santander team
+- Acceptance criteria (minimum)
+- Material from previous exercises (reference, not a recipe)
+- Suggested deliverable
 
 ---
 
 ## Supporting material (outside this path)
 
-The following repositories are not part of these four exercises; the instructor uses them to provision the cluster or for the AAP lab:
+The following repositories are not part of exercises 1–5; the instructor uses them to provision the cluster or for the AAP lab:
 
 - `lab-devspaces-ansible` — install Dev Spaces, virtualization, Gitea and VMs.
 - `lab-aap-ansible` / `lab-aap-ansible-exercise1` / `lab-aap-ansible-instruction` — Ansible Automation Platform.
