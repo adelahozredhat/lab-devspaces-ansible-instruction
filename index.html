@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Laboratorio OpenShift Dev Spaces — Ansible</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js" defer></script>
+  <script src="assets/app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#guide">Saltar al contenido</a>
+
+  <aside class="toc" id="toc-panel">
+    <div class="toc-brand">
+      <p class="toc-kicker" data-i18n="kicker">Guía del laboratorio</p>
+      <h1 data-i18n="brand">Dev Spaces · Ansible</h1>
+    </div>
+    <button type="button" class="toc-close" id="toc-close" aria-label="Cerrar índice">×</button>
+    <nav id="toc" aria-label="Índice"></nav>
+  </aside>
+
+  <div class="shell">
+    <header class="topbar">
+      <button type="button" class="menu-btn" id="toc-open" aria-controls="toc-panel">
+        <span></span><span></span><span></span>
+        <span class="menu-btn-label" data-i18n="index">Índice</span>
+      </button>
+      <p class="topbar-title" data-i18n="pageTitle">Laboratorio OpenShift Dev Spaces — Ansible</p>
+      <div class="lang" role="group" aria-label="Idioma">
+        <button type="button" data-lang="es" class="is-active">ES</button>
+        <button type="button" data-lang="en">EN</button>
+      </div>
+    </header>
+
+    <section class="config" id="config">
+      <div class="config-head">
+        <h2 data-i18n="configTitle">Datos del laboratorio</h2>
+        <p data-i18n="configHelp">Rellena las cajas: se sustituyen en la guía (repositorios, URLs y credenciales). Se guardan en este navegador.</p>
+        <div class="config-actions">
+          <button type="button" id="btn-share" data-i18n="share">Copiar enlace</button>
+          <button type="button" id="btn-reset" class="ghost" data-i18n="reset">Restablecer</button>
+          <button type="button" id="config-toggle" class="ghost" aria-expanded="true" data-i18n="collapse">Ocultar</button>
+        </div>
+      </div>
+
+      <form id="lab-form" class="config-body">
+        <fieldset>
+          <legend data-i18n="fsRepos">Repositorios Git</legend>
+          <label>
+            <span data-i18n="gitBase">URL base Git (sin barra final)</span>
+            <input name="gitBase" type="url" placeholder="https://github.com/adelahozredhat" autocomplete="off">
+          </label>
+          <label>
+            <span data-i18n="repoInstruction">Repo instrucciones</span>
+            <input name="repoInstruction" type="text" placeholder="lab-devspaces-ansible-instruction" autocomplete="off">
+          </label>
+          <label>
+            <span data-i18n="repoEx1">Repo ejercicio 1</span>
+            <input name="repoEx1" type="text" placeholder="lab-devspaces-ansible-exercise1" autocomplete="off">
+          </label>
+          <label>
+            <span data-i18n="repoEx2">Repo ejercicio 2</span>
+            <input name="repoEx2" type="text" placeholder="lab-devspaces-ansible-exercise2" autocomplete="off">
+          </label>
+          <label>
+            <span data-i18n="repoEx3">Repo ejercicio 3</span>
+            <input name="repoEx3" type="text" placeholder="lab-devspaces-ansible-exercise3" autocomplete="off">
+          </label>
+          <label>
+            <span data-i18n="repoEx4">Repo ejercicio 4</span>
+            <input name="repoEx4" type="text" placeholder="lab-devspaces-ansible-exercise4" autocomplete="off">
+          </label>
+          <label>
+            <span data-i18n="repoEx5">Repo ejercicio 5</span>
+            <input name="repoEx5" type="text" placeholder="lab-devspaces-ansible-exercise5" autocomplete="off">
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend data-i18n="fsDevspaces">OpenShift Dev Spaces</legend>
+          <label>
+            <span data-i18n="devspacesUrl">URL de acceso</span>
+            <input name="devspacesUrl" type="url" placeholder="https://devspaces.apps.ejemplo.com" autocomplete="off">
+          </label>
+          <label>
+            <span data-i18n="user">Usuario</span>
+            <input name="devspacesUser" type="text" autocomplete="username">
+          </label>
+          <label>
+            <span data-i18n="password">Contraseña</span>
+            <input name="devspacesPassword" type="password" autocomplete="current-password">
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend data-i18n="fsGitea">Gitea</legend>
+          <label>
+            <span data-i18n="giteaUrl">URL de Gitea</span>
+            <input name="giteaUrl" type="url" placeholder="https://repository-gitea-operator.apps.ejemplo.com" autocomplete="off">
+          </label>
+          <label>
+            <span data-i18n="user">Usuario</span>
+            <input name="giteaUser" type="text" placeholder="lab-user-1" autocomplete="off">
+          </label>
+          <label>
+            <span data-i18n="password">Contraseña</span>
+            <input name="giteaPassword" type="password" autocomplete="off">
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend data-i18n="fsOcp">OpenShift</legend>
+          <label>
+            <span data-i18n="ocpConsoleUrl">URL de la consola</span>
+            <input name="ocpConsoleUrl" type="url" autocomplete="off">
+          </label>
+          <label>
+            <span data-i18n="ocpApiUrl">URL de la API</span>
+            <input name="ocpApiUrl" type="url" placeholder="https://api.ejemplo.com:6443" autocomplete="off">
+          </label>
+          <label>
+            <span data-i18n="user">Usuario</span>
+            <input name="ocpUser" type="text" autocomplete="off">
+          </label>
+          <label>
+            <span data-i18n="password">Contraseña</span>
+            <input name="ocpPassword" type="password" autocomplete="off">
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend data-i18n="fsFedora">VM Fedora</legend>
+          <label>
+            <span data-i18n="fedoraHost">Host o IP (ansible_host)</span>
+            <input name="fedoraHost" type="text" autocomplete="off">
+          </label>
+          <label>
+            <span data-i18n="fedoraUser">Usuario SSH</span>
+            <input name="fedoraUser" type="text" placeholder="user1" autocomplete="off">
+          </label>
+          <label>
+            <span data-i18n="fedoraAlias">Alias en el inventario</span>
+            <input name="fedoraAlias" type="text" placeholder="fedora-user1" autocomplete="off">
+          </label>
+        </fieldset>
+      </form>
+    </section>
+
+    <section class="access" id="access-card" hidden>
+      <h2 data-i18n="accessTitle">Tus datos de acceso</h2>
+      <div class="access-grid" id="access-grid"></div>
+      <div class="access-links" id="access-links"></div>
+    </section>
+
+    <main id="guide" class="guide" tabindex="-1"></main>
+    <p class="status" id="status" hidden></p>
+  </div>
+</body>
+</html>

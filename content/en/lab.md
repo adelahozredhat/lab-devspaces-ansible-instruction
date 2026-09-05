@@ -1,7 +1,5 @@
 # OpenShift Dev Spaces lab — Ansible
 
-**GitHub Pages guide:** [index.html](index.html) (sidebar index, language switch, and fields for URLs, repositories and credentials). In the repository: *Settings → Pages → Deploy from a branch* (`master`, folder `/`).
-
 Continuous guide for the **four hands-on exercises** and an **extra challenge** (exercise 5). Follow the order on this page: the detailed content of each exercise is in the **README of its own repository**, not in this index.
 
 **Versión en castellano:** [README.md](README.md)
