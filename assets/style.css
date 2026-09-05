@@ -347,6 +347,15 @@ input:focus {
   font-size: 0.82rem;
 }
 
+.guide pre code {
+  display: block;
+  color: inherit;
+  background: transparent;
+  white-space: pre;
+  font-family: inherit;
+  font-size: inherit;
+}
+
 .guide code {
   font-family: var(--mono);
   font-size: 0.88em;
@@ -354,6 +363,7 @@ input:focus {
 
 .guide :not(pre) > code {
   background: #efe6d6;
+  color: var(--ink);
   padding: 0.05rem 0.28rem;
   border-radius: 0.25rem;
 }

@@ -252,17 +252,26 @@
     marked.use({
       gfm: true,
       renderer: {
-        code(token) {
-          const lang = token.lang || "";
-          const text = token.text || "";
-          if (lang === "mermaid") {
+        // marked 11 llama code(text, lang, escaped); versiones nuevas pasan un token.
+        code(token, infostring) {
+          let lang = "";
+          let text = "";
+          if (typeof token === "string") {
+            text = token;
+            lang = infostring || "";
+          } else if (token && typeof token === "object") {
+            text = token.text || "";
+            lang = token.lang || "";
+          }
+          if ((lang || "").trim() === "mermaid") {
             return `<div class="mermaid">${text}</div>`;
           }
           const escaped = text
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;");
-          return `<pre><code class="language-${lang}">${escaped}</code></pre>`;
+          const cls = lang ? ` class="language-${String(lang).split(/\s+/)[0]}"` : "";
+          return `<pre><code${cls}>${escaped}</code></pre>`;
         },
       },
     });
