@@ -44,7 +44,7 @@ Reference file template:
 
 ```ini
 [servers]
-fedora-user1 ansible_host=<host_or_IP_from_Excel> ansible_user=user1 ansible_ssh_private_key_file=ssh_tests_connections/id_fedora_new
+[[fedoraAlias]] ansible_host=[[fedoraHost]] ansible_user=[[fedoraUser]] ansible_ssh_private_key_file=ssh_tests_connections/id_fedora_new
 ```
 
 Without a correct inventory, `ansible-playbook -i inventory …` will not be able to reach your VM. Check SSH connectivity from the workspace before continuing with the guide.
@@ -305,7 +305,7 @@ Wrap this in a clear flow: on the controller, generate a WAR from `index.html` (
             group: "{{ wf_group }}"
 ```
 
-**Result on the node:** on the control machine: `/tmp/sample.war` file (ZIP with `index.html` inside). On the target: `/opt/wildfly/standalone/deployments/sample.war` owned by `wildfly`; WildFly may generate `sample.war.deployed` (and other markers) when deployment completes. Expected HTTP response to check the context, for example `curl http://<host>:8080/sample/`.
+**Result on the node:** on the control machine: `/tmp/sample.war` file (ZIP with `index.html` inside). On the target: `/opt/wildfly/standalone/deployments/sample.war` owned by `wildfly`; WildFly may generate `sample.war.deployed` (and other markers) when deployment completes. Expected HTTP response to check the context, for example `curl http://[[fedoraHost]]:8080/sample/`.
 
 **Final result of this block (step 15 — sample application):** `sample.war` artifact deployed; `/sample/` context serves the `index.html` content; typical check `curl -sSf http://localhost:8080/sample/` from the server or against the node IP.
 
@@ -715,7 +715,7 @@ ansible-playbook -i inventory deploy-wildfly.yaml
 Manual checks after deployment (example):
 
 ```bash
-ssh user1@10.234.2.26 -i ssh_tests_connections/id_fedora_new
+ssh [[fedoraUser]]@[[fedoraHost]] -i ssh_tests_connections/id_fedora_new
 curl localhost:8080/sample/
 ```
 

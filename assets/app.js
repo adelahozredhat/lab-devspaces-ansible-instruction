@@ -197,44 +197,101 @@
     });
   }
 
+  function stripSlash(value) {
+    return (value || "").trim().replace(/\/$/, "");
+  }
+
+  function pick(...values) {
+    return values.find((value) => (value || "").trim()) || "";
+  }
+
   function gitRoot() {
     if (cfg.giteaUrl && cfg.giteaUser) {
-      return `${cfg.giteaUrl.replace(/\/$/, "")}/${cfg.giteaUser}`;
+      return `${stripSlash(cfg.giteaUrl)}/${cfg.giteaUser.trim()}`;
     }
-    return (cfg.gitBase || DEFAULTS.gitBase).replace(/\/$/, "");
+    return stripSlash(cfg.gitBase || DEFAULTS.gitBase);
   }
 
   function repoUrl(name) {
-    const owner = cfg.giteaUrl && cfg.giteaUser ? `${cfg.giteaUrl.replace(/\/$/, "")}/${cfg.giteaUser}` : gitRoot();
-    return `${owner}/${name}`;
+    return `${gitRoot()}/${name}`;
+  }
+
+  function labTokens() {
+    const es = cfg.lang !== "en";
+    const repoInstruction = pick(cfg.repoInstruction) || DEFAULTS.repoInstruction;
+    const giteaUrl = stripSlash(cfg.giteaUrl) || (es ? "https://<host-gitea>" : "https://<gitea-host>");
+    const giteaUser = pick(cfg.giteaUser) || (es ? "<tu-usuario-gitea>" : "<your-gitea-user>");
+    const ocpUser = pick(cfg.ocpUser, cfg.devspacesUser) || (es ? "<usuario-openshift>" : "<openshift-user>");
+    const devspacesUser = pick(cfg.devspacesUser, cfg.ocpUser) || ocpUser;
+    const fedoraHost = pick(cfg.fedoraHost) || (es ? "<host_o_IP_del_Excel>" : "<host_or_IP_from_Excel>");
+    const fedoraUser = pick(cfg.fedoraUser) || DEFAULTS.fedoraUser;
+    const fedoraAlias = pick(cfg.fedoraAlias) || DEFAULTS.fedoraAlias;
+    const tokens = {
+      gitBase: stripSlash(cfg.gitBase) || DEFAULTS.gitBase,
+      gitRoot: gitRoot(),
+      repoInstruction,
+      repoEx1: pick(cfg.repoEx1) || DEFAULTS.repoEx1,
+      repoEx2: pick(cfg.repoEx2) || DEFAULTS.repoEx2,
+      repoEx3: pick(cfg.repoEx3) || DEFAULTS.repoEx3,
+      repoEx4: pick(cfg.repoEx4) || DEFAULTS.repoEx4,
+      repoEx5: pick(cfg.repoEx5) || DEFAULTS.repoEx5,
+      giteaUrl,
+      giteaUser,
+      giteaPassword: pick(cfg.giteaPassword) || (es ? "<contraseña-gitea>" : "<gitea-password>"),
+      giteaPath: `/${giteaUser}/${repoInstruction}`,
+      instructionRepoUrl: `${giteaUrl}/${giteaUser}/${repoInstruction}`,
+      instructionCloneUrl: `${giteaUrl}/${giteaUser}/${repoInstruction}.git`,
+      devspacesUrl: stripSlash(cfg.devspacesUrl) || (es ? "<URL-Dev-Spaces>" : "<Dev-Spaces-URL>"),
+      devspacesUser,
+      devspacesPassword: pick(cfg.devspacesPassword) || (es ? "<contraseña>" : "<password>"),
+      devspacesIdePath: `…/${devspacesUser}/ansible-demo/…`,
+      ocpConsoleUrl: stripSlash(cfg.ocpConsoleUrl) || (es ? "<URL-consola-OpenShift>" : "<OpenShift-console-URL>"),
+      ocpApiUrl: stripSlash(cfg.ocpApiUrl) || "https://api.<cluster>:6443",
+      ocpUser,
+      ocpPassword: pick(cfg.ocpPassword) || (es ? "<contraseña>" : "<password>"),
+      fedoraHost,
+      fedoraUser,
+      fedoraAlias,
+    };
+    return tokens;
   }
 
   function applyVars(markdown) {
     let text = markdown;
     text = text.replace(/\*\*English version:\*\*.*\n+/g, "");
     text = text.replace(/\*\*Versión en castellano:\*\*.*\n+/g, "");
-    const replacements = [
-      ["https://github.com/adelahozredhat", gitRoot()],
-      ["lab-devspaces-ansible-exercise5", cfg.repoEx5 || DEFAULTS.repoEx5],
-      ["lab-devspaces-ansible-exercise4", cfg.repoEx4 || DEFAULTS.repoEx4],
-      ["lab-devspaces-ansible-exercise3", cfg.repoEx3 || DEFAULTS.repoEx3],
-      ["lab-devspaces-ansible-exercise2", cfg.repoEx2 || DEFAULTS.repoEx2],
-      ["lab-devspaces-ansible-exercise1", cfg.repoEx1 || DEFAULTS.repoEx1],
-      ["lab-devspaces-ansible-instruction", cfg.repoInstruction || DEFAULTS.repoInstruction],
-    ];
-    replacements.forEach(([from, to]) => {
+    const tokens = labTokens();
+    text = text.replace(/\[\[([a-zA-Z0-9_]+)\]\]/g, (match, key) =>
+      Object.prototype.hasOwnProperty.call(tokens, key) ? tokens[key] : match
+    );
+    [
+      ["https://github.com/adelahozredhat", tokens.gitRoot],
+      ["lab-devspaces-ansible-exercise5", tokens.repoEx5],
+      ["lab-devspaces-ansible-exercise4", tokens.repoEx4],
+      ["lab-devspaces-ansible-exercise3", tokens.repoEx3],
+      ["lab-devspaces-ansible-exercise2", tokens.repoEx2],
+      ["lab-devspaces-ansible-exercise1", tokens.repoEx1],
+      ["lab-devspaces-ansible-instruction", tokens.repoInstruction],
+    ].forEach(([from, to]) => {
       text = text.split(from).join(to);
     });
-    if (cfg.fedoraHost) {
-      text = text.replace(/ansible_host=<host_o_IP_del_Excel>/g, `ansible_host=${cfg.fedoraHost}`);
-      text = text.replace(/ansible_host=<host_or_IP_from_Excel>/g, `ansible_host=${cfg.fedoraHost}`);
-    }
-    if (cfg.fedoraUser) {
-      text = text.replace(/ansible_user=user1/g, `ansible_user=${cfg.fedoraUser}`);
-    }
-    if (cfg.fedoraAlias) {
-      text = text.replace(/fedora-user1/g, cfg.fedoraAlias);
-    }
+    text = text.split(`https://<host-gitea>/<tu-usuario-gitea>/${tokens.repoInstruction}.git`).join(tokens.instructionCloneUrl);
+    text = text.split(`https://<gitea-host>/<your-gitea-user>/${tokens.repoInstruction}.git`).join(tokens.instructionCloneUrl);
+    text = text.split(`/<tu-usuario-gitea>/${tokens.repoInstruction}`).join(tokens.giteaPath);
+    text = text.split(`/<your-gitea-user>/${tokens.repoInstruction}`).join(tokens.giteaPath);
+    text = text.replace(/ansible_host=<host_o_IP_del_Excel>/g, `ansible_host=${tokens.fedoraHost}`);
+    text = text.replace(/ansible_host=<host_or_IP_from_Excel>/g, `ansible_host=${tokens.fedoraHost}`);
+    text = text.replace(/fedora-user1/g, tokens.fedoraAlias);
+    text = text.replace(/ansible_user=user1/g, `ansible_user=${tokens.fedoraUser}`);
+    text = text.replace(/curl http:\/\/<host>:8080\/sample\//g, `curl http://${tokens.fedoraHost}:8080/sample/`);
+    text = text.replace(/ssh user1@10\.234\.2\.26/g, `ssh ${tokens.fedoraUser}@${tokens.fedoraHost}`);
+    text = text.replace(/https:\/\/api\.<cluster>:6443/g, tokens.ocpApiUrl);
+    text = text.replace(/https:\/\/api\.<dominio>:6443/g, tokens.ocpApiUrl);
+    text = text.replace(/https:\/\/api\.<domain>:6443/g, tokens.ocpApiUrl);
+    text = text.replace(/"openhift_user":"<usuario>"/g, `"openhift_user":"${tokens.ocpUser}"`);
+    text = text.replace(/"openhift_user":"<user>"/g, `"openhift_user":"${tokens.ocpUser}"`);
+    text = text.replace(/"openhift_password":"<contraseña>"/g, `"openhift_password":"${tokens.ocpPassword}"`);
+    text = text.replace(/"openhift_password":"<password>"/g, `"openhift_password":"${tokens.ocpPassword}"`);
     return text;
   }
 

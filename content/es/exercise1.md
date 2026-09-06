@@ -44,7 +44,7 @@ Plantilla de referencia del fichero:
 
 ```ini
 [servers]
-fedora-user1 ansible_host=<host_o_IP_del_Excel> ansible_user=user1 ansible_ssh_private_key_file=ssh_tests_connections/id_fedora_new
+[[fedoraAlias]] ansible_host=[[fedoraHost]] ansible_user=[[fedoraUser]] ansible_ssh_private_key_file=ssh_tests_connections/id_fedora_new
 ```
 
 Sin un inventario correcto, `ansible-playbook -i inventory …` no podrá alcanzar tu VM. Comprueba conectividad SSH desde el workspace antes de seguir con la guía.
@@ -305,7 +305,7 @@ Encapsula en un flujo claro: en el controlador, genera un WAR a partir de `index
             group: "{{ wf_group }}"
 ```
 
-**Resultado en el nodo:** en la máquina de control: fichero `/tmp/sample.war` (ZIP con `index.html` dentro). En el objetivo: `/opt/wildfly/standalone/deployments/sample.war` con propietario `wildfly`; WildFly puede generar `sample.war.deployed` (y otros marcadores) al completar el despliegue. Respuesta HTTP esperada para comprobar el contexto, por ejemplo `curl http://<host>:8080/sample/`.
+**Resultado en el nodo:** en la máquina de control: fichero `/tmp/sample.war` (ZIP con `index.html` dentro). En el objetivo: `/opt/wildfly/standalone/deployments/sample.war` con propietario `wildfly`; WildFly puede generar `sample.war.deployed` (y otros marcadores) al completar el despliegue. Respuesta HTTP esperada para comprobar el contexto, por ejemplo `curl http://[[fedoraHost]]:8080/sample/`.
 
 **Resultado final del bloque (paso 15 — aplicación de ejemplo):** artefacto `sample.war` desplegado; contexto `/sample/` sirve el contenido de `index.html`; comprobación típica `curl -sSf http://localhost:8080/sample/` desde el servidor o contra la IP del nodo.
 
@@ -715,7 +715,7 @@ ansible-playbook -i inventory deploy-wildfly.yaml
 Comprobaciones manuales tras el despliegue (ejemplo):
 
 ```bash
-ssh user1@10.234.2.26 -i ssh_tests_connections/id_fedora_new
+ssh [[fedoraUser]]@[[fedoraHost]] -i ssh_tests_connections/id_fedora_new
 curl localhost:8080/sample/
 ```
 

@@ -301,7 +301,7 @@ ansible-navigator run test-exec-openshift.yaml \
   --eei quay.io/adelahoz/ee_kube_exec \
   --pp missing \
   --m stdout \
-  -e '{"openhift_url_api_client":"https://api.<cluster>:6443","openhift_user":"<usuario>","openhift_password":"<contraseña>"}'
+  -e '{"openhift_url_api_client":"[[ocpApiUrl]]","openhift_user":"[[ocpUser]]","openhift_password":"[[ocpPassword]]"}'
 ```
 
 **Importante:** las variables del playbook están definidas con el typo `**openhift_*`** (tres letras en “open”). Si las pasas con `-e`, los nombres deben coincidir exactamente con el YAML o habría que corregir el playbook (recomendado: renombrar a `openshift_*`).
@@ -318,7 +318,7 @@ ansible-navigator run test-exec-openshift.yaml \
 ### `test-exec-openshift.yaml` (API de OpenShift)
 
 1. **URL del API server**
-  Usa la URL del API (típicamente `https://api.<dominio>:6443`), no la consola web (`console-openshift-console...`).
+  Usa la URL del API (**[[ocpApiUrl]]**), no la consola web (`[[ocpConsoleUrl]]`).
 2. **Variables con typo**
   Corrige `openhift_url_api_client`, `openhift_user`, `openhift_password`, `openhift_validate_certs` → nombres consistentes `openshift_*` y actualiza todas las referencias en tareas.
 3. **Seguridad: contraseña en línea de comandos**

@@ -1,14 +1,14 @@
 # Acceder a Dev Spaces y arrancar el workspace
 
-Las capturas de esta sección son de un laboratorio de ejemplo. Verás un clúster concreto, el usuario OpenShift `user2` y el usuario Gitea `lab-user-2`. **Las URLs, las rutas y los usuarios de acceso dependen de la cuenta que te hayan asignado.** Usa los datos del Excel del laboratorio (o las cajas *Datos del laboratorio* de esta guía). No copies las rutas de las imágenes tal cual.
+Las capturas de esta sección son de un laboratorio de ejemplo (en las imágenes pueden verse otro clúster, `user2` y `lab-user-2`). **Las URLs, rutas y usuarios de abajo se actualizan con las cajas *Datos del laboratorio* de esta página.** No copies las rutas de las capturas tal cual.
 
-El workspace se crea a partir del **repositorio inicial de instrucciones** en Gitea (`lab-devspaces-ansible-instruction` de **tu** usuario). Ese repositorio incluye un `devfile.yaml` que clona también los repositorios de los ejercicios.
+El workspace se crea a partir del **repositorio inicial de instrucciones** en Gitea (`[[repoInstruction]]` de **[[giteaUser]]**). Ese repositorio incluye un `devfile.yaml` que clona también los repositorios de los ejercicios.
 
 ## 1. Abrir Dev Spaces e iniciar sesión
 
-1. Abre en el navegador la **URL de Dev Spaces** que te hayan indicado (normalmente termina en `/dashboard/`).
+1. Abre en el navegador **[[devspacesUrl]]** (normalmente termina en `/dashboard/`).
 2. Pulsa **Log in with OpenShift**.
-3. Autentícate con **tu** usuario y contraseña de OpenShift (`user1`, `user2`, …).
+3. Autentícate con el usuario **[[devspacesUser]]** y su contraseña.
 4. En **Authorize Access**, deja marcado `user:full` y pulsa **Allow selected permissions**.
 
 ![Página de acceso a Dev Spaces: Log in with OpenShift](images/3.01%20-%20accessenvironment.png)
@@ -23,15 +23,15 @@ Tras el login aparece **Create Workspace**. El campo **Git repo URL** es donde p
 
 ## 3. Copiar la URL del repositorio inicial en Gitea
 
-1. Abre la **URL de Gitea** del laboratorio.
-2. Entra con **Sign In** usando **tu** usuario Gitea (`lab-user-1`, `lab-user-2`, …). No es el mismo identificador que el usuario OpenShift: a `user2` le corresponde `lab-user-2`.
-3. Ve a **Explore → Repositories** y abre **tu** repositorio `lab-devspaces-ansible-instruction` (la ruta es `/<tu-usuario-gitea>/lab-devspaces-ansible-instruction`).
+1. Abre **[[giteaUrl]]**.
+2. Entra con **Sign In** usando el usuario Gitea **[[giteaUser]]**. No es el mismo identificador que OpenShift (**[[ocpUser]]**).
+3. Ve a **Explore → Repositories** y abre **tu** repositorio `[[repoInstruction]]` (la ruta es `[[giteaPath]]`).
 4. Pulsa el botón **<> Code**, pestaña **HTTPS**, y copia la URL (icono *Copy URL*).
 
-La URL tiene esta forma:
+La URL a copiar es:
 
 ```text
-https://<host-gitea>/<tu-usuario-gitea>/lab-devspaces-ansible-instruction.git
+[[instructionCloneUrl]]
 ```
 
 ![Página de inicio de Gitea](images/3.04%20-%20accessenvironment.png)
@@ -60,7 +60,7 @@ https://<host-gitea>/<tu-usuario-gitea>/lab-devspaces-ansible-instruction.git
 
 ## 5. Primera vez en el IDE
 
-El editor se abre en el navegador. La URL incluye **tu** usuario OpenShift y el nombre del workspace (`ansible-demo` en las capturas), por ejemplo `…/user2/ansible-demo/…`.
+El editor se abre en el navegador. La URL incluye tu usuario OpenShift **[[ocpUser]]** y el nombre del workspace (`ansible-demo` en las capturas), por ejemplo `[[devspacesIdePath]]`.
 
 1. Si ves **Restricted Mode**, confía en el workspace para habilitar las extensiones.
 2. Si pregunta **Do you trust the publisher 'redhat' and …?**, pulsa **Trust Publishers & Install**.
@@ -78,7 +78,7 @@ En el explorador aparecen las carpetas `lab-devspaces-ansible-instruction` y `la
 
 1. Menú **Terminal → New Terminal**.
 2. Elige el directorio de trabajo del ejercicio (o el de instrucciones).
-3. Si el **OpenShift Toolkit** pide URL de la API, usuario y contraseña, usa **tus** credenciales del clúster.
+3. Si el **OpenShift Toolkit** pide URL de la API, usuario y contraseña, usa **[[ocpApiUrl]]**, el usuario **[[ocpUser]]** y su contraseña.
 
 ![Menú Terminal → New Terminal](images/3.15%20-%20accessenvironment51-54.png)
 
