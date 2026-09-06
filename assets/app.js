@@ -26,6 +26,7 @@
   };
 
   const SECTIONS = [
+    { id: "access", file: "access.md", title: { es: "Acceso a Dev Spaces", en: "Accessing Dev Spaces" } },
     { id: "lab", file: "lab.md", title: { es: "Itinerario del laboratorio", en: "Lab path" } },
     { id: "ex1", file: "exercise1.md", title: { es: "Ejercicio 1 — Playbooks", en: "Exercise 1 — Playbooks" } },
     { id: "ex2", file: "exercise2.md", title: { es: "Ejercicio 2 — Roles en Git", en: "Exercise 2 — Roles in Git" } },

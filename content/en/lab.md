@@ -8,16 +8,16 @@ Continuous guide for the **four hands-on exercises** and an **extra challenge** 
 
 ## How the exercises are deployed
 
-Each exercise is **deployed separately** in **Red Hat OpenShift Dev Spaces**: a distinct Git repository and a **distinct Dev Spaces workspace**. You are not expected to have all exercises open at once, nor as sibling folders in a single project.
+Each exercise lives in **its own Git repository**. The usual lab start is **a single workspace** created from the instruction repository (*Accessing Dev Spaces* section): the `devfile.yaml` clones every project. Work in the folder of the exercise you are on and open its `README.md`. You can also create a workspace from a single exercise repo if the instructor says so.
 
 Typical flow:
 
-1. Open the lab **Dev Spaces dashboard**.
-2. **Create or start a workspace** from the Git repository of the exercise you are on (`lab-devspaces-ansible-exercise1`, then `…-exercise2`, and so on; the extra challenge is `…-exercise5`). Each repository includes its `devfile.yaml`.
-3. When the workspace is ready, open **`README.md`** (or **`README_EN.md`**) at the **root of that project**. For exercises 1–4 that is the step-by-step guide; for exercise 5 it is the challenge requirements.
-4. When you finish, move to the next exercise by **creating another workspace** from the next repository. The teaching thread is the same (WildFly / Ansible); the development environment is **not** shared across exercises.
+1. Sign in to Dev Spaces and **start the workspace** from **your** instruction repo URL (*Accessing Dev Spaces* section). Paths and the login user depend on the account you use.
+2. In the explorer, open the exercise repository (`lab-devspaces-ansible-exercise1`, then `…-exercise2`, and so on; the extra challenge is `…-exercise5`).
+3. Open **`README.md`** (or **`README_EN.md`**) at the **root of that project**. For exercises 1–4 that is the step-by-step guide; for exercise 5 it is the challenge requirements.
+4. When you finish, move to the next exercise **in the next folder** (same workspace). If you prefer one workspace per exercise, create another from that repository URL.
 
-This repository (`lab-devspaces-ansible-instruction`) is only the **lab map**. Use it for the order and the section index; the practical work happens inside each exercise workspace.
+This repository (`lab-devspaces-ansible-instruction`) is the **lab map** and the **workspace entry point**. Use it for the order and the section index; the practical work happens inside each exercise folder.
 
 ---
 
@@ -49,7 +49,7 @@ flowchart LR
 4. In **exercise 4** you package the runtime (collections, Python, `oc`, etc.) into an **EE image** and run playbooks inside it.
 5. **Exercise 5** is **optional**: a challenge for whoever finishes the rest; there is no step-by-step recipe.
 
-Before each exercise, **create the Dev Spaces workspace** of the indicated repository (each one ships its `devfile.yaml`, unless the instructor specifies another image). The section index below matches the headings of that `README.md`.
+Before each exercise, **open that repository folder** in the workspace (the instruction `devfile.yaml` already cloned it; each exercise also ships its own if you start a separate workspace). The section index below matches the headings of that `README.md`.
 
 ---
 

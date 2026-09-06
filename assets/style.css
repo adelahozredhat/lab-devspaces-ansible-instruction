@@ -390,6 +390,17 @@ input:focus {
   color: var(--accent-dark);
 }
 
+.guide img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0.7rem 0 1.15rem;
+  border: 1px solid var(--line);
+  border-radius: 0.45rem;
+  box-shadow: var(--shadow);
+  background: #fff;
+}
+
 .status {
   margin: 1rem 1.25rem 2rem;
   color: var(--ok);
