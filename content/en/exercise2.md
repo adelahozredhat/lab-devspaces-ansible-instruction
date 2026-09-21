@@ -1,8 +1,24 @@
 # lab-devspaces-ansible-exercise2
 
+Hands-on course on **reusable Ansible roles**. **This exercise is designed to be completed inside OpenShift Dev Spaces**.
+
+Image versions (the same as exercise 1; check them in the workspace):
+
+| Tool | Version in Dev Spaces |
+| ---- | --------------------- |
+| Python | **3.12** |
+| ansible-core | **2.21.x** |
+| yamllint | **1.38.x** |
+| ansible-lint | **26.x** (e.g. 26.6.0) |
+| Molecule | **26.x** (e.g. 26.6.0); driver **`default`** (`delegated` does not exist) |
+
+**What you must do:** **move** the `wildfly_os_deps` role content you created in **`lab-devspaces-ansible-exercise1`** into **this** repository (`lab-devspaces-ansible-exercise2`) and **call it from exercise 1** with `ansible-galaxy` and `requirements.yml`. Do not create an empty repository on the forge: use the exercise2 clone, which already has Git and `origin` on Gitea.
+
+---
+
 ## What is an Ansible role?
 
-A **role** is a reusable unit that groups tasks, data, templates, and metadata under a **name** (`wildfly_os_deps`, `nginx`, etc.). The playbook only declares which roles to apply and in which order; Ansible automatically loads each role’s conventional files (`tasks/main.yml`, `defaults/main.yml`, etc.). That way you avoid huge playbooks, you can **version and share** a role in Git (or Galaxy), and **reuse it** across several projects without copy-pasting YAML.
+A **role** is a reusable unit that groups tasks, data, templates, and metadata under a **name** (`wildfly_os_deps`, `nginx`, etc.). The playbook only declares which roles to apply and in which order; Ansible automatically loads each role’s conventional files (`tasks/main.yml`, `defaults/main.yml`, `vars/main.yml`, etc.). That way you avoid huge playbooks, you can **version and share** a role in Git (or Galaxy), and **reuse it** across several projects without copy-pasting YAML.
 
 You do not have to use every folder: many roles only have `tasks/`, `defaults/`, and `meta/`. Folders that do not exist are ignored.
 
@@ -22,8 +38,10 @@ role_name/
 │   └── main.yml           # main role tasks
 ├── templates/
 │   └── app.conf.j2        # Jinja2 templates for the template module
+├── tests/
+│   └── test.yml           # role test playbook
 ├── vars/
-│   └── main.yml           # role-internal variables (high precedence)
+│   └── main.yml           # role constants (high precedence)
 └── README.md              # human documentation (optional but recommended)
 ```
 
@@ -47,7 +65,7 @@ List of **tasks** Ansible runs when applying the role. This is the core of the r
 
 ```yaml
 ---
-- name: recargar httpd
+- name: Recargar httpd
   ansible.builtin.service:
     name: httpd
     state: reloaded
@@ -65,7 +83,7 @@ httpd_package: httpd
 
 #### `vars/main.yml`
 
-Variables with **higher precedence** than `defaults`; they are usually role constants or values you do not want the user to change without editing the role.
+Variables with **higher precedence** than `defaults`; they are **role constants** (values you do not want the user to change without editing the role).
 
 ```yaml
 ---
@@ -104,97 +122,140 @@ galaxy_info:
   min_ansible_version: "2.14"
 ```
 
+#### `tests/`
+
+Playbooks that **exercise the role** in isolation (syntax, `--check`, or a real run). Ansible does not run them by itself: you launch them with `ansible-playbook` (see part C).
+
 #### `README.md`
 
-Human documentation: what the role does, available variables, and a playbook usage example. Ansible does not interpret it, but it is essential in shared repos.
+Human documentation: what the role does, available variables, and a playbook usage example. Ansible does not interpret it.
+
+In **this** repository `README.md` is the **lab guide**. Do not replace it or commit it as if it were the role README.
 
 ---
 
-In this lab’s practice, **`tasks/`**, **`defaults/`**, and **`meta/`** will be enough for the sample role; **`handlers/`**, **`files/`**, **`templates/`**, and **`vars/`** come into play when the role grows or needs templates and coordinated restarts.
+In this lab you will use **`tasks/`**, **`defaults/`**, **`vars/`**, **`meta/`**, and **`tests/`**. **`handlers/`**, **`files/`**, and **`templates/`** come into play when the role grows or needs templates and coordinated restarts.
 
 ---
 
 ## What this lab consists of
 
-**Exercise goal:** extract a role from the **`lab-devspaces-ansible-exercise2`** playbook into a **Git repository of its own** and **consume it from another playbook project** using `ansible-galaxy` and a **`requirements.yml`** file.
+**Goal:** take the **`wildfly_os_deps`** role (Java, `tar`, `gzip` packages) from table **4.1 in the `lab-devspaces-ansible-exercise1` README**, **move its content** to the root of **`lab-devspaces-ansible-exercise2`**, and **invoke it again from exercise 1** (playbook + `requirements.yml` + `ansible-galaxy`).
 
-As a reference, the suggested role **`wildfly_os_deps`** is used (package installation: Java, `tar`, `gzip`) from the table in section **4.1** of the exercise2 README. The same steps work for `wildfly_account`, `wildfly_install`, `wildfly_bind`, `wildfly_systemd`, or `wildfly_sample_app`, adjusting tasks, variables, and dependencies between roles.
+The same steps work for `wildfly_account`, `wildfly_install`, `wildfly_bind`, `wildfly_systemd`, or `wildfly_sample_app`, adjusting tasks, variables, and dependencies.
 
 ### Concrete objectives
 
-1. Have the role code in an **independent Git repository**, with the standard Ansible role structure.
-2. In the **playbook project** (for example the exercise2 one, or another), **do not** duplicate that tree under `roles/` in the playbook repository; instead **declare the source in `requirements.yml`** and install the role with `ansible-galaxy`.
-3. The playbook still references the role by **name** (`wildfly_os_deps`) as if it were in `roles/`, but the content comes from Git.
+1. The role code lives in **`lab-devspaces-ansible-exercise2`** (repo root = role root).
+2. In **`lab-devspaces-ansible-exercise1`** there is **no** versioned copy of `roles/wildfly_os_deps/`: **delete** the local role folder and declare the source in `requirements.yml`.
+3. The exercise 1 playbook still uses the name `wildfly_os_deps`; the content comes from Git (this repo) via Galaxy.
 
 ---
 
 ## Prerequisites
 
-- Have followed **exercise2** far enough to understand section **4** (suggested roles) or have already extracted at least one role locally in `roles/<role_name>/`.
-- `git`, `ansible`, and `ansible-galaxy` available in the workspace (for example the Devfile container of this lab).
-- A **Git remote** where you can publish the role: GitHub, GitLab, or another (HTTPS or SSH URL according to lab policy).
+- Have followed **`lab-devspaces-ansible-exercise1`** through **section 4** (suggested roles) and have at least `roles/wildfly_os_deps/` (or the equivalent block in the playbook) in that project.
+- Work **in Dev Spaces**, with the versions in the table at the start (`git`, `ansible`, `ansible-galaxy`, `yamllint`, `ansible-lint`, Molecule).
+- This clone is already a Git repository with `origin` on Gitea: **do not** create an empty repo or run `git init` / `git remote add`.
 
 ---
 
-## Part A — Create the role repository (separate project)
+## Part A — Move the role into `lab-devspaces-ansible-exercise2`
 
-### A.1 Create the empty repository on the forge
+### A.1 This repository is the role repository
 
-On your Git platform, create a new repository, for example `ansible-role-wildfly-os-deps`. **Do not** initialize with a README if you are going to push an already prepared local tree (avoids conflicts on the first push).
+**Do not** create an empty repository on the forge. You work in **`lab-devspaces-ansible-exercise2`**, which is already cloned and points at Gitea.
 
-### A.2 Clone and structure at the repo root
+Convention: **this repo root is the role root** (not a `roles/wildfly_os_deps` subfolder). That way `ansible-galaxy install` installs the content under the `name` you declare in `requirements.yml`.
 
-Usual convention for a **single-role** repo: the **repository root is the role root** (not a `roles/wildfly_os_deps` subfolder inside the repo). That way `ansible-galaxy install -r requirements.yml` installs the content with the name you declare.
-
-Minimum tree:
+Minimum tree in **`lab-devspaces-ansible-exercise2/`**:
 
 ```text
-ansible-role-wildfly-os-deps/
+lab-devspaces-ansible-exercise2/
+├── .galaxy-ignore
 ├── defaults/
+│   └── main.yml
+├── vars/
 │   └── main.yml
 ├── meta/
 │   └── main.yml
 ├── tasks/
 │   └── main.yml
-└── README.md          # optional but recommended
+├── tests/
+│   └── test.yml
+└── molecule/
+    └── default/
+        └── …   # part D
 ```
+
+(`README.md`, `devfile.yaml`, and `.vscode/` already ship with the lab; leave them. `tests/` and `molecule/` are created in parts C and D, not in the first A.7 commit. About `.galaxy-ignore`, see A.7: it does **not** stop `ansible-galaxy install` from Git from copying those files.)
+
+### A.2 Move the content from exercise 1
+
+From the workspace, copy (or cut) what you have in exercise1 into the exercise2 root:
+
+```bash
+# Adjust the paths if your projects are not siblings
+mkdir -p tasks
+cp -a ../lab-devspaces-ansible-exercise1/roles/wildfly_os_deps/tasks/. ./tasks/
+# defaults/ may not exist in exercise 1 (e.g. if vars live in group_vars):
+cp -a ../lab-devspaces-ansible-exercise1/roles/wildfly_os_deps/defaults/. ./defaults/ 2>/dev/null || true
+# if you already had meta/ or vars/ in exercise 1, copy them too
+```
+
+If `defaults/` was missing in exercise 1, or the role only existed as tasks inside the monolithic playbook, **create** the A.3–A.6 files by hand (OS dependencies: Java, `tar`, `gzip`). Do not assume the `defaults` `cp` will succeed.
+
+**Then**, in exercise 1, **delete** the local copy so there is a single source of truth:
+
+```bash
+rm -rf ../lab-devspaces-ansible-exercise1/roles/wildfly_os_deps
+```
+
+The exercise 1 playbook will still call `wildfly_os_deps` after you install it with Galaxy (part B).
 
 ### A.3 Contents of `tasks/main.yml`
 
-Migrate only the tasks that belong to this role. For `wildfly_os_deps`, equivalent to the dependencies block of the exercise2 monolithic playbook:
+Use the tasks you moved. If you start from the exercise 1 dependencies block:
 
 ```yaml
 ---
-- name: Instalar dependencias (Java 21+ para WildFly 39)
+- name: Instalar dependencias (Java 17+ es requerido para WF 39)
   ansible.builtin.dnf:
-    name:
-      - java-21-openjdk-devel
-      - tar
-      - gzip
+    name: "{{ wf_os_packages }}"
     state: present
 ```
 
-If the role combined more blocks, add the rest of the tasks here and use variable names consistent with `defaults/main.yml`.
-
 ### A.4 Contents of `defaults/main.yml`
 
-Centralize default values (even if this particular role may not need variables, it is good practice to leave the file):
+Values the playbook **may** override (`group_vars`, play `vars:`):
 
 ```yaml
 ---
-# Default values for the wildfly_os_deps role (extend if you add variables to the tasks)
+wf_java_package: java-25-openjdk-devel
 ```
 
-If you parameterize packages or Java versions, declare them here and use them in `tasks/main.yml` with `{{ variable_name }}`.
+### A.5 Contents of `vars/main.yml` (role constants)
 
-### A.5 `meta/main.yml` (role metadata)
+Constants that **should not** be changed from the playbook. In this role, the unpack utilities are fixed; the JDK remains overridable via `defaults`:
 
-Helps with documentation, compatibility, and future Galaxy publications:
+```yaml
+---
+wf_os_unpack_packages:
+  - tar
+  - gzip
+wf_os_packages: "{{ [wf_java_package] + wf_os_unpack_packages }}"
+```
+
+If your role has no constants, leave the file with a `---` header and a comment; the `vars/` folder documents the convention.
+
+### A.6 `meta/main.yml` (role metadata)
 
 ```yaml
 ---
 galaxy_info:
-  author: tu_usuario_o_equipo
+  author: your_lab_user
+  role_name: wildfly_os_deps
+  namespace: labuser
   description: Dependencias de sistema para WildFly (Java, tar, gzip)
   license: MIT
   min_ansible_version: "2.14"
@@ -209,119 +270,382 @@ galaxy_info:
 dependencies: []
 ```
 
-Adjust `author`, `license`, and `platforms` to what your organization requires.
+Replace `author` with your lab user (access data). `role_name` must match the `name` in `requirements.yml` (part B). `namespace` **cannot contain hyphens or uppercase letters**: Galaxy and ansible-lint reject values such as `lab-user-2`. Use something like `labuser` or `labuser2`.
 
-### A.6 First commit and push
+If ansible-lint or Molecule still complain about `role-name` (the repo directory name has hyphens), add a `.ansible-lint` at the root of this repo:
 
-```bash
-cd ansible-role-wildfly-os-deps
-git init
-git add defaults meta tasks README.md
-git commit -m "Initial import: wildfly_os_deps role"
-git remote add origin <GIT_REPOSITORY_URL>
-git branch -M main
-git push -u origin main
+```yaml
+---
+skip_list:
+  - role-name
 ```
 
-For stable versions, create **tags** (`v1.0.0`) and use the tag in `requirements.yml` (see part B).
+### A.7 Publish the role files
+
+The remote **already exists**. Add only the role code that **already exists at this point** (A.3–A.6). **Do not** `git add tests molecule`: those folders are created in parts C and D; if they are missing, Git fails with `pathspec ... did not match any files`.
+
+Create `.galaxy-ignore` (useful if you later **package** the role for Galaxy). It does **not** stop `ansible-galaxy install` with `scm: git` from cloning the whole repo: in exercise 1 you will see this `README.md`, `README_EN.md`, `devfile.yaml`, and `.vscode/` under `roles/wildfly_os_deps/`. That is expected with install-from-git. After install you may delete those files from the installed role by hand; **do not** version that folder (it is a Galaxy artifact).
+
+Also list `.ansible/` (the part C symlink) so you do not ship it if you ever package the role:
+
+```text
+README.md
+README_EN.md
+devfile.yaml
+.vscode
+.ansible
+```
+
+```bash
+git add defaults vars meta tasks .galaxy-ignore .ansible-lint
+git commit -m "Add wildfly_os_deps role"
+git push origin HEAD
+```
+
+After parts C and D, make another commit with `tests/`, `ansible.cfg`, and `molecule/`.
+
+Note the **branch** you push (`master` on the lab clone unless you use another): you will need it as `version:` in `requirements.yml`.
 
 ---
 
-## Part B — Consume the role from the playbook project
+## Part B — Call the role from `lab-devspaces-ansible-exercise1`
 
-Work in the **playbook** directory (for example `lab-devspaces-ansible-exercise2` or a copy with only inventory and playbooks).
+Work in the exercise 1 **playbook** directory (`lab-devspaces-ansible-exercise1`).
 
-### B.1 Remove the duplicated role from the playbook repo (recommended)
+### B.1 Remove the local role from exercise 1
 
-If you already had `roles/wildfly_os_deps/` in the same repo as the playbook:
+If `roles/wildfly_os_deps/` still exists in exercise1, delete it (see A.2). Other local roles (`wildfly_account`, and so on) can stay under `roles/`.
 
-- Delete that folder from the playbook repository (or stop versioning it) so the only source of truth is the role Git repo.
-- Make sure `.gitignore` **does not** ignore `roles/` if you are going to version other local roles; if you only use roles installed by Galaxy, you can ignore `roles/wildfly_os_deps` after installing, or not version `roles/` and document that `ansible-galaxy install` must be run after clone (common strategy).
+If you version the playbook, do not commit the `roles/wildfly_os_deps` folder produced by Galaxy: it is an `ansible-galaxy install` artifact.
 
-### B.2 Create `requirements.yml` at the playbook project root
+### B.2 `requirements.yml` at the exercise1 root
 
-`requirements.yml` file (**roles** only in this example):
+**Replace** `<GITEA_HOST>` and `<GITEA_USER>` with values from **your lab access data** (Gitea URL and user, for example `lab-user-1`). Replace `master` if you pushed a different branch.
+
+If exercise 1 **already has** a `requirements.yml` (e.g. with `collections:` for Molecule), **do not replace it**: add the `roles:` block to the existing file. Rewriting it with only `roles:` drops the collections.
 
 ```yaml
 ---
 roles:
   - name: wildfly_os_deps
-    src: git+<GIT_REPOSITORY_URL>
+    src: https://<GITEA_HOST>/<GITEA_USER>/lab-devspaces-ansible-exercise2.git
     scm: git
-    version: main
+    version: master
 ```
 
-Replace:
+Example `src` (each student fills in their own values):
 
-- `<GIT_REPOSITORY_URL>` with the cloneable URL (HTTPS or SSH). Examples:
-  - `git+https://github.com/org/ansible-role-wildfly-os-deps.git`
-  - `git+git@gitlab.example.com:ansible/ansible-role-wildfly-os-deps.git`
-- `version` with the branch (`main`, `develop`) or with a **tag** (`v1.0.0`) for reproducible installs.
-
-Equivalent alternative format (without `git+` prefix in some environments):
-
-```yaml
----
-roles:
-  - name: wildfly_os_deps
-    src: https://github.com/org/ansible-role-wildfly-os-deps.git
-    scm: git
-    version: main
+```text
+https://<GITEA_HOST>/<GITEA_USER>/lab-devspaces-ansible-exercise2.git
 ```
 
-### B.3 Install roles in the playbook project
+Do not copy a classmate’s URL: use **your** Gitea host and **your** user.
 
-From the directory where `requirements.yml` is:
+### B.3 Install the role in the playbook project
+
+From `lab-devspaces-ansible-exercise1`:
 
 ```bash
-ansible-galaxy install -r requirements.yml
+ansible-galaxy role install -r requirements.yml --roles-path ./roles
 ```
 
-By default roles are installed in `~/.ansible/roles` or in the path defined by `roles_path` in `ansible.cfg`. To place them **next to the playbook** in `./roles/` (typical in lab projects), use:
+`--roles-path` makes Galaxy **ignore** `collections:` in the same `requirements.yml` (you will see a warning). Install collections separately if you need them:
 
 ```bash
-ansible-galaxy install -r requirements.yml --roles-path ./roles
+ansible-galaxy collection install -r requirements.yml
 ```
 
-Check that `roles/wildfly_os_deps/tasks/main.yml` exists (or another path under `roles_path`).
+Check that `roles/wildfly_os_deps/tasks/main.yml` exists. It is normal for README/`devfile`/`.vscode` to appear as well (Git install; see A.7).
 
-### B.4 Configure `ansible.cfg` (optional but clear)
+### B.4 Configure `ansible.cfg` (recommended)
 
-If you always use `--roles-path ./roles`, you can set it in `ansible.cfg` at the playbook project root:
+At the exercise1 root:
 
 ```ini
 [defaults]
 roles_path = ./roles
 ```
 
-That way `ansible-playbook` resolves the role by name without extra flags.
+### B.5 Complete playbook (external role + local roles)
 
-### B.5 Playbook that references the role
+In exercise 1 `deploy-wildfly.yaml` **do not comment out** the other roles. Only `wildfly_os_deps` is installed from Git (this exercise); **`wildfly_account`**, **`wildfly_install`**, **`wildfly_bind`**, **`wildfly_systemd`**, and **`wildfly_sample_app`** stay as the ones you already had under `roles/` in exercise 1. The run remains a **full WildFly installation**, not a partial play.
 
-The play does not change compared to having the role “at hand” in the repo: the name must match `name` in `requirements.yml`.
+The Galaxy `name` must match `name` in `requirements.yml`:
 
 ```yaml
 ---
-- name: Instalación de WildFly con rol externo (ejemplo parcial)
+- name: Instalación de WildFly con roles
+  hosts: servers
+  become: true
+  roles:
+    - role: wildfly_os_deps      # external: Galaxy / this repo (exercise2)
+    - role: wildfly_account      # local: exercise 1
+    - role: wildfly_install
+    - role: wildfly_bind
+    - role: wildfly_systemd
+    - role: wildfly_sample_app
+```
+
+If you later extract **another** role to Git, the pattern is the same: that role leaves local `roles/`, enters `requirements.yml`, and the others stay in the playbook so the order and the final result do not change.
+
+### B.6 Verification from exercise 1
+
+Inventory: use the IP from **your lab access data** (see the exercise 1 README).
+
+```bash
+ansible-playbook -i inventory deploy-wildfly.yaml --syntax-check
+ansible-playbook -i inventory deploy-wildfly.yaml
+```
+
+`--syntax-check` only validates YAML/the play. The **real** run must complete WildFly and `/sample/` as in exercise 1; `wildfly_os_deps` only changes **where** that role comes from.
+
+Do not use `--check` on the **full** WildFly playbook: the task that packages the WAR on localhost does not write `/tmp/sample.war` in check mode, and the following copy fails (`Could not find or access '/tmp/sample.war'`). `--check` on the **role test** (part C) is fine, because it only installs RPMs.
+
+---
+
+## Part C — Role tests, yamllint, and ansible-lint
+
+Do this **in `lab-devspaces-ansible-exercise2`**, against the role code (not the guide).
+
+### C.1 Test playbook (`tests/test.yml`)
+
+The play must call the role **by name** (`wildfly_os_deps`), not by a path (`{{ playbook_dir }}/..`). ansible-lint 26.x flags paths as `role-name[path]` and Molecule `prepare` would fail.
+
+Because this repo **root is** the role (there is no `roles/wildfly_os_deps` subfolder), symlink the current directory under that name and set `roles_path` in `ansible.cfg`:
+
+```bash
+mkdir -p .ansible/roles
+ln -sfn "$(pwd)" .ansible/roles/wildfly_os_deps
+```
+
+`ansible.cfg` at the root of **this** repository:
+
+```ini
+[defaults]
+roles_path = .ansible/roles
+host_key_checking = False
+```
+
+`.ansible/` is local: do not version it (add it to `.gitignore` in this repo). `.galaxy-ignore` does **not** stop Git from cloning it when installing the role; do not `git add` the symlink either.
+
+```yaml
+---
+- name: Test del rol wildfly_os_deps
   hosts: servers
   become: true
   roles:
     - role: wildfly_os_deps
-    # - role: wildfly_account
-    # - role: wildfly_install
-    # ... remaining local roles or also in requirements.yml
 ```
 
-If the other roles remain only in the playbook repo, leave them in local `roles/`; mixing **Galaxy/Git** roles and **local** roles is common.
+### C.2 How to run it
 
-### B.6 Verification
+Use the exercise 1 inventory (IP from your lab access data). The SSH key in that file is usually `ssh_tests_connections/id_fedora_new`: that path is **relative to the working directory**. If you run the playbook **from exercise2**, SSH cannot find the key (`No such file or directory`).
+
+Fix the exercise 1 `inventory` so the key is anchored to `inventory_dir` (works from exercise1 and from exercise2). In an **INI** inventory the `{{ }}` braces **must be quoted**; otherwise Ansible fails with `Expected key=value host variable assignment, got: inventory_dir` and `--syntax-check` can still exit **0** (empty inventory, only `localhost`):
+
+```ini
+[servers]
+fedora-user1 ansible_host=[[fedoraHost]] ansible_user=user1 ansible_ssh_private_key_file="{{ inventory_dir }}/ssh_tests_connections/id_fedora_new"
+```
+
+Replace host, IP, and user with **your** data. Confirm the inventory resolves (`ansible -i … servers -m ping`) **before** trusting `--syntax-check`. Then, from `lab-devspaces-ansible-exercise2`:
 
 ```bash
-ansible-playbook -i inventory deploy-wildfly.yaml --syntax-check
-ansible-playbook -i inventory deploy-wildfly.yaml --check
+ansible-playbook -i ../lab-devspaces-ansible-exercise1/inventory tests/test.yml --syntax-check
+ansible-playbook -i ../lab-devspaces-ansible-exercise1/inventory tests/test.yml --check
+# real run (installs Java/tar/gzip on the VM):
+ansible-playbook -i ../lab-devspaces-ansible-exercise1/inventory tests/test.yml
 ```
 
-(Adjust the playbook name if you use one that only includes the test role.)
+If your project folders are not siblings, adjust the `-i inventory` path.
+
+### C.3 yamllint
+
+Validate the **role** YAML (you do not need to lint this README or the lab `devfile.yaml`):
+
+```bash
+yamllint defaults vars meta tasks tests
+```
+
+If you prefer `yamllint .`, add a `.yamllint` that ignores `devfile.yaml`, this README, and `.cache/`. Fix warnings until exit code `0`.
+
+### C.4 ansible-lint
+
+Analyze the full role (tasks, defaults, vars, meta, and tests):
+
+```bash
+ansible-lint defaults vars meta tasks tests
+```
+
+Review **the full output** (not a single warning) and fix until exit code `0`. Re-run C.3 and C.4 if you change YAML.
+
+---
+
+## Part D — Molecule: test the role test playbook
+
+Molecule runs `tests/test.yml` (part C) against a test machine: **create** → **prepare** (lint) → **converge** (the role test) → **verify** (only what **this** role does) → **destroy**.
+
+The Dev Spaces image includes **Molecule 26.x** (e.g. 26.6.0) with ansible-core **2.21** and Python **3.12**. The driver is named `default` (the old name `delegated` no longer exists).
+
+| Scenario | Machine | create / destroy | Where |
+| -------- | ------- | ---------------- | ----- |
+| `default` | **New** Fedora VM on OpenShift (KubeVirt) | Creates the VM at the start and **destroys** it at the end | **Only from Dev Spaces**. **Optional and advanced**: YAML copied from exercise 1 is **not** enough (namespace, VMI IP, SSH key). |
+| `with_existing_machine` | **Pre-started** lab Fedora (exercise 1 inventory) | Does not create or delete that VM | Dev Spaces, against your Fedora. **This is the scenario you must complete** in class. |
+
+**What this role verifies:** Java (`java-25-openjdk-devel`), `tar`, and `gzip` packages. **Do not** check the `wildfly` service, port 8080, or `/sample/`: those belong to other exercise 1 roles.
+
+If you extract **another** role (`wildfly_install`, `wildfly_systemd`, `wildfly_sample_app`, …), `tests/test.yml` and `verify.yml` must **first** include the prerequisite steps that role needs (for example user, tarball, and `standalone.xml` before systemd). This example only covers `wildfly_os_deps`, which does not depend on earlier roles.
+
+Create the directories:
+
+```bash
+mkdir -p molecule/default molecule/with_existing_machine
+```
+
+### D.1 Scenario `default` — test VM on OpenShift (Dev Spaces only)
+
+Same idea as **section 5.3.1 of exercise 1**, with the same traps if you copy the skeleton as-is: `namespace: my-namespace` does not exist; `wait_for` against `localhost` is not the VMI; the Fedora image does **not** include `id_fedora_new` and may not use `ansible_user: fedora`; do not push `molecule_vars.yml` to Gitea.
+
+Use `default` **only** if the instructor gives you a real namespace, VMI IP, and SSH user. In class the scenario that completes the exercise is `with_existing_machine` (D.2).
+
+##### `molecule/default/molecule.yml`
+
+```yaml
+---
+dependency:
+  name: galaxy
+driver:
+  name: default
+platforms:
+  - name: fedora-chocolate-smelt-74
+provisioner:
+  name: ansible
+  inventory:
+    hosts:
+      all:
+        children:
+          servers:
+            hosts:
+              fedora-chocolate-smelt-74: {}
+    host_vars:
+      fedora-chocolate-smelt-74:
+        ansible_user: fedora
+        ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+verifier:
+  name: ansible
+scenario:
+  test_sequence:
+    - destroy
+    - create
+    - prepare
+    - converge
+    - verify
+    - destroy
+```
+
+##### `molecule/default/prepare.yml`
+
+Lint **the role** (not `deploy-wildfly.yaml`):
+
+```yaml
+---
+- name: Lint YAML and Ansible before converge
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    project_dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
+  tasks:
+    - name: Run yamllint on the role
+      ansible.builtin.command:
+        cmd: yamllint defaults vars meta tasks tests
+        chdir: "{{ project_dir }}"
+      changed_when: false
+
+    - name: Run ansible-lint on the role
+      ansible.builtin.command:
+        cmd: ansible-lint defaults vars meta tasks tests
+        chdir: "{{ project_dir }}"
+      changed_when: false
+```
+
+##### `molecule/default/converge.yml`
+
+Runs the role test playbook (part C), not the full WildFly playbook:
+
+```yaml
+---
+- name: Converge
+  ansible.builtin.import_playbook: ../../tests/test.yml
+```
+
+##### `molecule/default/verify.yml`
+
+Assertions for **this** role only:
+
+```yaml
+---
+- name: Verificar paquetes instalados por wildfly_os_deps
+  hosts: servers
+  become: true
+  gather_facts: false
+  vars:
+    wf_java_package: java-25-openjdk-devel
+  tasks:
+    - name: Comprobar que Java, tar y gzip están instalados
+      ansible.builtin.dnf:
+        name:
+          - "{{ wf_java_package }}"
+          - tar
+          - gzip
+        state: present
+      check_mode: true
+      register: pkg_status
+      failed_when: pkg_status.changed
+
+    - name: Comprobar que java está en el PATH
+      ansible.builtin.command:
+        cmd: java -version
+      changed_when: false
+```
+
+**Create / destroy:** the same `molecule/default/create.yml`, `destroy.yml`, and `molecule_vars.yml` as in exercise 1 **after you adapt them** (real namespace, VMI IP as `ansible_host`, SSH user/key). The `default` scenario is run **only from Dev Spaces** and is not part of the minimum classroom checklist.
+
+### D.2 Scenario `with_existing_machine` — lab VM
+
+Copy `prepare.yml`, `converge.yml`, and `verify.yml` from the `default` scenario. `create.yml` / `destroy.yml` must not create or power off the student’s Fedora (same pattern as exercise 1: a `debug` message only).
+
+In `molecule.yml` use `driver.name: default` with `managed: false`. `ansible_host` is the IP from **your lab access data** (the same as the exercise1 `inventory`) and port **22**. In this classroom Dev Spaces reaches the Fedora VM **directly**; `127.0.0.1:2222` only applies if the instructor asked for an **SSH tunnel**. If you copy those values as-is, Molecule will not connect.
+
+The SSH key must be reachable **from exercise2**, for example:
+
+```yaml
+ansible_ssh_private_key_file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../lab-devspaces-ansible-exercise1/ssh_tests_connections/id_fedora_new"
+```
+
+### D.3 Run Molecule
+
+From the **`lab-devspaces-ansible-exercise2`** root:
+
+```bash
+# lab Fedora; not deleted (classroom scenario)
+molecule test -s with_existing_machine
+
+# new VM on OpenShift; destroyed at the end (Dev Spaces only, and only if you adapted create.yml)
+molecule test -s default
+```
+
+Step by step (debugging), `with_existing_machine` scenario:
+
+```bash
+molecule create -s with_existing_machine
+molecule prepare -s with_existing_machine
+molecule converge -s with_existing_machine
+molecule verify -s with_existing_machine
+molecule destroy -s with_existing_machine
+```
+
+After `destroy` on `default`, that test VM **must no longer** exist in OpenShift. After `destroy` on `with_existing_machine`, the student’s Fedora **stays running**.
 
 ---
 
@@ -329,28 +653,31 @@ ansible-playbook -i inventory deploy-wildfly.yaml --check
 
 | Step | Where | Action |
 |------|--------|--------|
-| 1 | Git forge | Create the role repo (e.g. `ansible-role-wildfly-os-deps`). |
-| 2 | Role repo | `tasks/`, `defaults/`, `meta/` structure at the root. |
-| 3 | Role repo | Migrate tasks and variables from the chosen exercise2 block. |
-| 4 | Role repo | `git commit` and `git push` (and tags if you version). |
-| 5 | Playbook repo | Add `requirements.yml` with `name`, `src`, `scm`, `version`. |
-| 6 | Playbook repo | `ansible-galaxy install -r requirements.yml --roles-path ./roles`. |
-| 7 | Playbook repo | Optional: `ansible.cfg` → `roles_path = ./roles`. |
-| 8 | Playbook repo | Playbook with `roles: [ wildfly_os_deps, ... ]`. |
-| 9 | — | `ansible-playbook` with a correct inventory. |
+| 1 | exercise2 | `tasks/`, `defaults/`, `vars/`, `meta/`, `tests/` at the root of **this** repo. |
+| 2 | exercise1 → exercise2 | **Move** `roles/wildfly_os_deps` content (or the equivalent block) into exercise2. |
+| 3 | exercise1 | **Delete** local `roles/wildfly_os_deps`. |
+| 4 | exercise2 | `.galaxy-ignore` + `git add` only what exists (`defaults vars meta tasks .galaxy-ignore .ansible-lint`); `commit` and `git push origin HEAD`. `tests/` and `molecule/` in a later commit. Do not push `.ansible/`. |
+| 5 | exercise1 | Add `roles:` to `requirements.yml` (do not drop `collections:` if they were already there) with `src` from **your** Gitea. |
+| 6 | exercise1 | `ansible-galaxy role install -r requirements.yml --roles-path ./roles` (and `collection install` separately if needed). |
+| 7 | exercise1 | **Complete** playbook: external `wildfly_os_deps` + remaining **local** exercise 1 roles. |
+| 8 | exercise2 | `ansible.cfg` + `.ansible/roles/wildfly_os_deps` symlink, `tests/test.yml` (role by **name**), INI inventory with **quoted** `inventory_dir`, `yamllint` + `ansible-lint`. |
+| 9 | exercise2 | Molecule `with_existing_machine`: `converge` = role test; `verify` = Java/tar/gzip. `default` (KubeVirt) is optional. |
+| 10 | exercise1 | **Real** `ansible-playbook` (WildFly + `/sample/`); do not `--check` the full playbook. |
 
 ---
 
 ## Practical notes
 
-- **Private roles:** with HTTPS you usually need a token or credential helper; with SSH, a key in the workspace and `src: git+git@...`.
-- **Dependency order:** if later `wildfly_install` depends on variables defined in another role, use `dependencies` in the consuming role’s `meta/main.yml` or keep the order in the playbook `roles:`.
-- **CI/CD:** in a pipeline, always run `ansible-galaxy install -r requirements.yml` before `ansible-playbook`.
-- **Same role for several playbooks:** several playbook repositories can point at the same `src` and `version` in their own `requirements.yml`.
+- **Always replace** Gitea host, user, and branch; do not leave `<GITEA_HOST>` / `<GITEA_USER>` placeholders.
+- **Private roles:** HTTPS often needs a token; on the lab Gitea, `ansible-galaxy install` from Git usually works without an extra token.
+- **Dependency order:** if `wildfly_install` depends on another role, use `dependencies` in `meta/main.yml` or the order in the playbook `roles:`.
+- **CI/CD:** `ansible-galaxy role install -r requirements.yml --roles-path ./roles` (and `collection install` if the file also lists collections) before `ansible-playbook`.
+- **Galaxy / Git:** `.galaxy-ignore` does not apply to a clone; the installed role will include README, `devfile.yaml`, and `.vscode/`. Do not version `roles/wildfly_os_deps/` in exercise1.
+- **Inventory from exercise2:** use `ansible_ssh_private_key_file="{{ inventory_dir }}/ssh_tests_connections/id_fedora_new"` (**quoted**) in the exercise 1 INI `inventory`; a cwd-relative path will not resolve the key, and without quotes the inventory will not even parse.
 
 ---
 
 ## Expected result
 
-- A **Git repository** contains a reusable Ansible role with standard structure.
-- The **playbook project** declares that role in **`requirements.yml`**, installs it with **`ansible-galaxy`**, and the playbook invokes it by **name** without copying the role code into the playbook repo (unless you choose to version `roles/` after installing; the usual approach is not to version generated artifacts and to version `requirements.yml`).
+- **`lab-devspaces-ansible-exercise2`** contains the role (tasks, defaults, vars, meta, tests), passes yamllint/ansible-lint, the role test, and Molecule `with_existing_machine` (`verify` checks only this role). The `default` scenario is optional and does not work if copied as-is from exercise 1.
+- **`lab-devspaces-ansible-exercise1`** no longer versions `roles/wildfly_os_deps`; it declares that role in `requirements.yml` and the playbook runs the **full installation** (external role + local exercise 1 roles).

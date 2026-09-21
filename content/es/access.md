@@ -1,6 +1,6 @@
 # Acceder a Dev Spaces y arrancar el workspace
 
-Las capturas de esta sección son de un laboratorio de ejemplo (en las imágenes pueden verse otro clúster, `user2` y `lab-user-2`). **Las URLs, rutas y usuarios de abajo se actualizan con las cajas *Datos del laboratorio* de esta página.** No copies las rutas de las capturas tal cual.
+Las capturas de esta sección son de un laboratorio de ejemplo. Verás un clúster concreto, el usuario OpenShift `user2` y el usuario Gitea `lab-user-2`. **Las URLs, las rutas y los usuarios de acceso dependen de la cuenta que te hayan asignado.** Usa los datos del Excel del laboratorio o las cajas *Datos del laboratorio* de esta página. No copies las rutas de las imágenes tal cual.
 
 El workspace se crea a partir del **repositorio inicial de instrucciones** en Gitea (`[[repoInstruction]]` de **[[giteaUser]]**). Ese repositorio incluye un `devfile.yaml` que clona también los repositorios de los ejercicios.
 
@@ -8,7 +8,7 @@ El workspace se crea a partir del **repositorio inicial de instrucciones** en Gi
 
 1. Abre en el navegador **[[devspacesUrl]]** (normalmente termina en `/dashboard/`).
 2. Pulsa **Log in with OpenShift**.
-3. Autentícate con el usuario **[[devspacesUser]]** y su contraseña.
+3. Autentícate con el usuario **[[devspacesUser]]** y su contraseña (`user1`, `user2`, …).
 4. En **Authorize Access**, deja marcado `user:full` y pulsa **Allow selected permissions**.
 
 ![Página de acceso a Dev Spaces: Log in with OpenShift](images/3.01%20-%20accessenvironment.png)
@@ -24,7 +24,7 @@ Tras el login aparece **Create Workspace**. El campo **Git repo URL** es donde p
 ## 3. Copiar la URL del repositorio inicial en Gitea
 
 1. Abre **[[giteaUrl]]**.
-2. Entra con **Sign In** usando el usuario Gitea **[[giteaUser]]**. No es el mismo identificador que OpenShift (**[[ocpUser]]**).
+2. Entra con **Sign In** usando el usuario Gitea **[[giteaUser]]**. No es el mismo identificador que OpenShift (**[[ocpUser]]**): a `user2` le corresponde `lab-user-2`.
 3. Ve a **Explore → Repositories** y abre **tu** repositorio `[[repoInstruction]]` (la ruta es `[[giteaPath]]`).
 4. Pulsa el botón **<> Code**, pestaña **HTTPS**, y copia la URL (icono *Copy URL*).
 

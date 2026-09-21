@@ -1,6 +1,6 @@
 # Accessing Dev Spaces and starting the workspace
 
-The screenshots in this section come from a sample lab (they may show another cluster, `user2` and `lab-user-2`). **The URLs, paths and users below update from the *Lab settings* boxes on this page.** Do not copy the paths from the screenshots as-is.
+The screenshots in this section come from a sample lab. You will see a specific cluster, OpenShift user `user2` and Gitea user `lab-user-2`. **URLs, paths and login users depend on the account assigned to you.** Use the lab Excel or the *Lab settings* boxes on this page. Do not copy the paths from the screenshots as-is.
 
 The workspace is created from the **initial instruction repository** on Gitea (`[[repoInstruction]]` belonging to **[[giteaUser]]**). That repository includes a `devfile.yaml` that also clones the exercise repositories.
 
@@ -8,7 +8,7 @@ The workspace is created from the **initial instruction repository** on Gitea (`
 
 1. In the browser, open **[[devspacesUrl]]** (it usually ends with `/dashboard/`).
 2. Click **Log in with OpenShift**.
-3. Authenticate with user **[[devspacesUser]]** and their password.
+3. Authenticate with user **[[devspacesUser]]** and their password (`user1`, `user2`, …).
 4. On **Authorize Access**, leave `user:full` selected and click **Allow selected permissions**.
 
 ![Dev Spaces login page: Log in with OpenShift](images/3.01%20-%20accessenvironment.png)
@@ -24,7 +24,7 @@ After login you land on **Create Workspace**. The **Git repo URL** field is wher
 ## 3. Copy the initial repository URL from Gitea
 
 1. Open **[[giteaUrl]]**.
-2. Click **Sign In** with Gitea user **[[giteaUser]]**. It is not the same identifier as OpenShift (**[[ocpUser]]**).
+2. Click **Sign In** with Gitea user **[[giteaUser]]**. It is not the same identifier as OpenShift (**[[ocpUser]]**): `user2` maps to `lab-user-2`.
 3. Go to **Explore → Repositories** and open **your** `[[repoInstruction]]` repository (the path is `[[giteaPath]]`).
 4. Click the **<> Code** button, **HTTPS** tab, and copy the URL (*Copy URL* icon).
 

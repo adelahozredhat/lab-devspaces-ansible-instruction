@@ -3,7 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Laboratorio OpenShift Dev Spaces — Ansible</title>
+  <title>Star Tech Adventure 3.0 — Ansible Lifecycle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@600;700;800&family=Red+Hat+Mono:wght@400;500&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css">
   <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js" defer></script>
@@ -14,8 +17,9 @@
 
   <aside class="toc" id="toc-panel">
     <div class="toc-brand">
-      <p class="toc-kicker" data-i18n="kicker">Guía del laboratorio</p>
-      <h1 data-i18n="brand">Dev Spaces · Ansible</h1>
+      <p class="toc-kicker" data-i18n="kicker">Protocolo de misión</p>
+      <h1 data-i18n="brand">Ansible Lifecycle</h1>
+      <p class="toc-status"><span>SISTEMA: NCC-STARTECH</span><b data-i18n="online">ESTADO: ONLINE</b></p>
     </div>
     <button type="button" class="toc-close" id="toc-close" aria-label="Cerrar índice">×</button>
     <nav id="toc" aria-label="Índice"></nav>
@@ -27,12 +31,44 @@
         <span></span><span></span><span></span>
         <span class="menu-btn-label" data-i18n="index">Índice</span>
       </button>
-      <p class="topbar-title" data-i18n="pageTitle">Laboratorio OpenShift Dev Spaces — Ansible</p>
+      <p class="topbar-title" data-i18n="pageTitle">Star Tech Adventure 3.0 — Ansible Lifecycle</p>
       <div class="lang" role="group" aria-label="Idioma">
         <button type="button" data-lang="es" class="is-active">ES</button>
         <button type="button" data-lang="en">EN</button>
       </div>
     </header>
+
+    <section class="hero" aria-label="Star Tech Adventure 3.0">
+      <div class="hero-copy">
+        <p class="hero-badge" data-i18n="heroBadge">Protocolo de misión</p>
+        <h2 class="hero-title">
+          <span class="hero-title-main">Star Tech</span>
+          <span class="hero-title-accent">
+            Adventure 3.0
+            <svg class="rocket" viewBox="0 0 32 32" aria-hidden="true">
+              <path fill="#ee0000" d="M16 2c4 5 6 10 6 16 0 2-.3 3.7-.8 5.2L16 30l-5.2-6.8C10.3 21.7 10 20 10 18c0-6 2-11 6-16z"/>
+              <circle fill="#fff" cx="16" cy="14" r="2.2"/>
+              <path fill="#c4c4c4" d="M10 18c-2.4.6-4.2 2-5.4 4 2.2.2 4 .2 5.8-.4.2-1.2.5-2.4.8-3.6h-1.2zm12 0h-1.2c.3 1.2.6 2.4.8 3.6 1.8.6 3.6.6 5.8.4-1.2-2-3-3.4-5.4-4z"/>
+              <path fill="#ffb3b3" d="M14 26.5c.6 1.4 1.3 2.6 2 3.5.7-.9 1.4-2.1 2-3.5-.7.2-1.3.3-2 .3s-1.3-.1-2-.3z"/>
+            </svg>
+          </span>
+        </h2>
+        <p class="hero-kicker" data-i18n="heroKicker">Explorando el espacio profundo</p>
+        <p class="hero-sub" data-i18n="heroSub">Ansible Lifecycle</p>
+        <p class="hero-tag" data-i18n="heroTag">Scaling Automation Excellence</p>
+        <div class="hero-metrics">
+          <div class="metric"><strong>100%</strong><span data-i18n="metricIdem">idempotente</span></div>
+          <div class="metric"><strong>0 Manual</strong><span data-i18n="metricManual">config drift cero</span></div>
+          <div class="metric"><strong>5</strong><span data-i18n="metricModules">Módulos</span></div>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="hero-orbit"></div>
+        <div class="hero-capsule"></div>
+        <div class="hero-spark spark-1"></div>
+        <div class="hero-spark spark-2"></div>
+      </div>
+    </section>
 
     <section class="config" id="config">
       <div class="config-head">
@@ -156,6 +192,10 @@
 
     <main id="guide" class="guide" tabindex="-1"></main>
     <p class="status" id="status" hidden></p>
+    <footer class="site-footer">
+      <span data-i18n="footerLeft">lab-devspaces-ansible // orbital telemetry</span>
+      <span data-i18n="footerRight">star tech workshop</span>
+    </footer>
   </div>
 </body>
 </html>

@@ -28,7 +28,7 @@
   const SECTIONS = [
     { id: "access", file: "access.md", title: { es: "Acceso a Dev Spaces", en: "Accessing Dev Spaces" } },
     { id: "lab", file: "lab.md", title: { es: "Itinerario del laboratorio", en: "Lab path" } },
-    { id: "ex1", file: "exercise1.md", title: { es: "Ejercicio 1 — Playbooks", en: "Exercise 1 — Playbooks" } },
+    { id: "ex1", file: "exercise1.md", title: { es: "Ejercicio 1 — Playbooks y roles", en: "Exercise 1 — Playbooks and roles" } },
     { id: "ex2", file: "exercise2.md", title: { es: "Ejercicio 2 — Roles en Git", en: "Exercise 2 — Roles in Git" } },
     { id: "ex3", file: "exercise3.md", title: { es: "Ejercicio 3 — Colecciones", en: "Exercise 3 — Collections" } },
     { id: "ex4", file: "exercise4.md", title: { es: "Ejercicio 4 — Execution Environments", en: "Exercise 4 — Execution Environments" } },
@@ -37,9 +37,19 @@
 
   const I18N = {
     es: {
-      pageTitle: "Laboratorio OpenShift Dev Spaces — Ansible",
-      kicker: "Guía del laboratorio",
-      brand: "Dev Spaces · Ansible",
+      pageTitle: "Star Tech Adventure 3.0 — Ansible Lifecycle",
+      kicker: "Protocolo de misión",
+      brand: "Ansible Lifecycle",
+      online: "ESTADO: ONLINE",
+      heroBadge: "Protocolo de misión",
+      heroKicker: "Explorando el espacio profundo",
+      heroSub: "Ansible Lifecycle",
+      heroTag: "Scaling Automation Excellence",
+      metricIdem: "idempotente",
+      metricManual: "config drift cero",
+      metricModules: "Módulos",
+      footerLeft: "lab-devspaces-ansible // orbital telemetry",
+      footerRight: "star tech workshop",
       index: "Índice",
       configTitle: "Datos del laboratorio",
       configHelp: "Rellena las cajas: se sustituyen en la guía (repositorios, URLs y credenciales). Se guardan en este navegador.",
@@ -77,9 +87,19 @@
       loadError: "No se pudieron cargar las guías. Sirve esta carpeta por HTTP (GitHub Pages o un servidor local).",
     },
     en: {
-      pageTitle: "OpenShift Dev Spaces lab — Ansible",
-      kicker: "Lab guide",
-      brand: "Dev Spaces · Ansible",
+      pageTitle: "Star Tech Adventure 3.0 — Ansible Lifecycle",
+      kicker: "Mission protocol",
+      brand: "Ansible Lifecycle",
+      online: "STATUS: ONLINE",
+      heroBadge: "Mission protocol",
+      heroKicker: "Exploring deep space",
+      heroSub: "Ansible Lifecycle",
+      heroTag: "Scaling Automation Excellence",
+      metricIdem: "idempotent",
+      metricManual: "zero config drift",
+      metricModules: "Modules",
+      footerLeft: "lab-devspaces-ansible // orbital telemetry",
+      footerRight: "star tech workshop",
       index: "Contents",
       configTitle: "Lab settings",
       configHelp: "Fill in the boxes: values replace repositories, URLs and credentials in the guide. Stored in this browser.",
@@ -281,10 +301,17 @@
     text = text.split(`/<your-gitea-user>/${tokens.repoInstruction}`).join(tokens.giteaPath);
     text = text.replace(/ansible_host=<host_o_IP_del_Excel>/g, `ansible_host=${tokens.fedoraHost}`);
     text = text.replace(/ansible_host=<host_or_IP_from_Excel>/g, `ansible_host=${tokens.fedoraHost}`);
+    text = text.replace(/ansible_host=<IP_de_tus_datos_de_laboratorio>/g, `ansible_host=${tokens.fedoraHost}`);
+    text = text.replace(/ansible_host=<IP_from_your_lab_access_data>/g, `ansible_host=${tokens.fedoraHost}`);
+    text = text.replace(/ansible_host:\s*<IP_de_tus_datos_de_laboratorio>/g, `ansible_host: ${tokens.fedoraHost}`);
+    text = text.replace(/ansible_host:\s*<IP_from_your_lab_access_data>/g, `ansible_host: ${tokens.fedoraHost}`);
     text = text.replace(/fedora-user1/g, tokens.fedoraAlias);
     text = text.replace(/ansible_user=user1/g, `ansible_user=${tokens.fedoraUser}`);
+    text = text.replace(/ansible_user:\s*user1/g, `ansible_user: ${tokens.fedoraUser}`);
     text = text.replace(/curl http:\/\/<host>:8080\/sample\//g, `curl http://${tokens.fedoraHost}:8080/sample/`);
     text = text.replace(/ssh user1@10\.234\.2\.26/g, `ssh ${tokens.fedoraUser}@${tokens.fedoraHost}`);
+    text = text.replace(/ssh user1@<IP_de_tus_datos_de_laboratorio>/g, `ssh ${tokens.fedoraUser}@${tokens.fedoraHost}`);
+    text = text.replace(/ssh user1@<IP_from_your_lab_access_data>/g, `ssh ${tokens.fedoraUser}@${tokens.fedoraHost}`);
     text = text.replace(/https:\/\/api\.<cluster>:6443/g, tokens.ocpApiUrl);
     text = text.replace(/https:\/\/api\.<dominio>:6443/g, tokens.ocpApiUrl);
     text = text.replace(/https:\/\/api\.<domain>:6443/g, tokens.ocpApiUrl);
@@ -465,7 +492,19 @@
       buildToc();
       observeToc();
       if (window.mermaid) {
-        mermaid.initialize({ startOnLoad: false, theme: "neutral" });
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: "base",
+          themeVariables: {
+            primaryColor: "#fde8ea",
+            primaryTextColor: "#151515",
+            primaryBorderColor: "#ee0000",
+            lineColor: "#151515",
+            secondaryColor: "#e7f7f6",
+            tertiaryColor: "#f7f8fa",
+            fontFamily: "Red Hat Text, Segoe UI, sans-serif",
+          },
+        });
         await mermaid.run({ querySelector: ".mermaid" });
       }
       if (location.hash) {

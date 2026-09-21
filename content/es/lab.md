@@ -1,8 +1,6 @@
 # Laboratorio OpenShift Dev Spaces — Ansible
 
-Guía continuada de los **cuatro ejercicios prácticos** y de un **reto extra** (ejercicio 5). Sigue el orden de esta página: el contenido detallado de cada ejercicio está en el **README de su propio repositorio**, no en este índice.
-
-**English version:** [README_EN.md](README_EN.md)
+Guía continuada de los **cuatro ejercicios prácticos** y de un **reto extra** (ejercicio 5). Sigue el orden de esta página: debajo del itinerario está la **guía completa** de cada ejercicio (la misma que el `README.md` / `README_EN.md` de su repositorio).
 
 ---
 
@@ -35,8 +33,8 @@ flowchart LR
 
 | Orden | Repositorio Git (workspace Dev Spaces) | Qué aprendes | Guía en ese workspace |
 | ----- | -------------------------------------- | ------------ | --------------------- |
-| 1 | `lab-devspaces-ansible-exercise1` | Playbook monolítico, refactor con `tags`/`block`, roles locales, calidad y firma | `README.md` · `README_EN.md` |
-| 2 | `lab-devspaces-ansible-exercise2` | Extraer un rol a un repositorio Git y consumirlo con `requirements.yml` | `README.md` · `README_EN.md` |
+| 1 | `lab-devspaces-ansible-exercise1` | Playbook monolítico, refactor con `tags`/`block`, roles locales, `files/`/`templates/`, calidad y firma | `README.md` · `README_EN.md` |
+| 2 | `lab-devspaces-ansible-exercise2` | Mover un rol a este repositorio y consumirlo desde el ejercicio 1 con `requirements.yml` | `README.md` · `README_EN.md` |
 | 3 | `lab-devspaces-ansible-exercise3` | Estructura de una colección, módulo propio, `ansible-test` y cobertura | `README.md` · `README_EN.md` |
 | 4 | `lab-devspaces-ansible-exercise4` | Definir, construir y ejecutar un Execution Environment con ansible-navigator | `README.md` · `README_EN.md` |
 | Extra | `lab-devspaces-ansible-exercise5` | Reto: análisis y desarrollo (despliegue Hello World en WildFly, ciclo de vida de la colección, EE del equipo) | `README.md` · `README_EN.md` |
@@ -44,7 +42,7 @@ flowchart LR
 **Cómo encajan entre sí**
 
 1. En el **ejercicio 1** escribes y refactorizas el playbook de WildFly hasta roles locales, linters, Molecule y `ansible-sign`.
-2. En el **ejercicio 2** sacas uno de esos roles (p. ej. `wildfly_os_deps`) a un Git independiente y lo instalas con `ansible-galaxy`.
+2. En el **ejercicio 2** sacas uno de esos roles (p. ej. `wildfly_os_deps`) a este repositorio Git y lo instalas con `ansible-galaxy` desde el ejercicio 1.
 3. En el **ejercicio 3** subes de nivel: una **colección** agrupa módulos, roles y tests bajo un FQCN.
 4. En el **ejercicio 4** empaquetas el runtime (colecciones, Python, `oc`, etc.) en una **imagen EE** y ejecutas playbooks dentro de ella.
 5. El **ejercicio 5** es **opcional**: un reto para quien termine el resto; no hay receta paso a paso.
@@ -56,9 +54,9 @@ Antes de cada ejercicio, **abre la carpeta de ese repositorio** en el workspace 
 ## Ejercicio 1 — Playbooks, roles locales y calidad
 
 **Repositorio Git / workspace Dev Spaces:** `lab-devspaces-ansible-exercise1`  
-**Guía completa:** en ese workspace, `README.md` (castellano) o `README_EN.md` (inglés).
+**Guía completa:** en esa carpeta, `README.md` (castellano) o `README_EN.md` (inglés). También está más abajo en esta página.
 
-Curso práctico: el fichero de referencia `deploy-wildfly.yaml` es el resultado objetivo. Construyes el playbook, lo refactorizas y lo validas.
+Este ejercicio se realiza **dentro de OpenShift Dev Spaces**. El repositorio **no incluye** `deploy-wildfly.yaml`: lo construyes tú ensamblando los fragmentos YAML de la guía.
 
 ### Índice de la guía
 
@@ -72,7 +70,7 @@ Curso práctico: el fichero de referencia `deploy-wildfly.yaml` es el resultado 
   - Paso 4 — Grupo de sistema para WildFly
   - Paso 5 — Usuario de sistema para WildFly
   - Paso 6 — Descarga e instalación del producto
-  - Paso 7 — Limpieza del enlace o directorio destino
+  - Paso 7 — Limpieza del enlace o directorio destino (si aplica)
   - Paso 8 — Enlace simbólico a la versión concreta
   - Paso 9 — Escucha en todas las interfaces
   - Paso 10 — Script de arranque para systemd
@@ -81,23 +79,28 @@ Curso práctico: el fichero de referencia `deploy-wildfly.yaml` es el resultado 
   - Paso 13 — Arranque y habilitación del servicio
   - Paso 14 — (Opcional) Firewall
   - Paso 15 — Aplicación de ejemplo
-- 3. Refactorización con `tags` y `block`
+- 3. Segunda parte: refactorización con `tags` y `block`
   - 3.1 Etiquetas (`tags`)
   - 3.2 Bloques (`block`)
-- 4. Roles, variables y handlers
+- 4. Tercera parte: roles, variables y handlers
   - 4.1 Esquema sugerido de roles
   - 4.2 Variables
   - 4.3 Handlers
   - 4.4 Playbook que llama a los roles
+  - 4.5 Ficheros estáticos (`files/`) y plantillas Jinja2 (`templates/`)
 - 5. Calidad: yamllint, ansible-lint y Molecule
   - 5.1 yamllint
   - 5.2 ansible-lint
-  - 5.3 Molecule
+  - Gazapos intencionados (yamllint y ansible-lint)
+  - 5.3 Molecule (prueba del playbook)
+    - 5.3.1 Escenario `default` — VM de prueba en OpenShift
+    - 5.3.2 Escenario `with_existing_machine` — VM del laboratorio
+    - 5.3.3 Lanzar los tests de Molecule
 - 6. Firma del proyecto con `ansible-sign`
   - Contraseña de laboratorio (frase de paso GPG)
   - 6.1 Requisitos e instalación
   - 6.2 Par de claves GPG para firmar
-  - 6.3 `MANIFEST.in`
+  - 6.3 `MANIFEST.in`: qué ficheros entran en la firma
   - 6.4 Firmar el proyecto
   - 6.5 Verificar la firma
 - Resumen
@@ -110,9 +113,9 @@ Curso práctico: el fichero de referencia `deploy-wildfly.yaml` es el resultado 
 ## Ejercicio 2 — Roles reutilizables en Git
 
 **Repositorio Git / workspace Dev Spaces:** `lab-devspaces-ansible-exercise2`  
-**Guía completa:** en ese workspace, `README.md` (castellano) o `README_EN.md` (inglés).
+**Guía completa:** en esa carpeta, `README.md` (castellano) o `README_EN.md` (inglés). También está más abajo en esta página.
 
-Partes de los roles del ejercicio 1: publicas uno en un repositorio Git propio y lo consumes desde el playbook con `ansible-galaxy` y `requirements.yml`.
+**Mueves** el rol `wildfly_os_deps` creado en el ejercicio 1 a **este** repositorio y lo **llamas desde el ejercicio 1** con `ansible-galaxy` y `requirements.yml`. No crees un repositorio vacío en la forja: usa el clone de exercise2.
 
 ### Índice de la guía
 
@@ -122,32 +125,42 @@ Partes de los roles del ejercicio 1: publicas uno en un repositorio Git propio y
 - En qué consiste este laboratorio
   - Objetivos concretos
 - Prerrequisitos
-- Parte A — Crear el repositorio del rol
-  - A.1 Crear el repositorio vacío en la forja
-  - A.2 Clonar y estructura en la raíz del repo
+- Parte A — Mover el rol a `lab-devspaces-ansible-exercise2`
+  - A.1 Este repositorio es el del rol
+  - A.2 Mover el contenido desde el ejercicio 1
   - A.3 Contenido de `tasks/main.yml`
   - A.4 Contenido de `defaults/main.yml`
-  - A.5 `meta/main.yml`
-  - A.6 Primer commit y push
-- Parte B — Consumir el rol desde el playbook
-  - B.1 Quitar el rol duplicado
-  - B.2 Crear `requirements.yml`
-  - B.3 Instalar roles
-  - B.4 Configurar `ansible.cfg`
-  - B.5 Playbook que referencia el rol
-  - B.6 Verificación
+  - A.5 Contenido de `vars/main.yml` (constantes del rol)
+  - A.6 `meta/main.yml` (metadatos del rol)
+  - A.7 Publicar los ficheros del rol
+- Parte B — Llamar el rol desde `lab-devspaces-ansible-exercise1`
+  - B.1 Quitar el rol local del ejercicio 1
+  - B.2 `requirements.yml` en la raíz de exercise1
+  - B.3 Instalar el rol en el proyecto del playbook
+  - B.4 Configurar `ansible.cfg` (recomendado)
+  - B.5 Playbook completo (rol externo + roles locales)
+  - B.6 Verificación desde el ejercicio 1
+- Parte C — Tests del rol, yamllint y ansible-lint
+  - C.1 Playbook de test (`tests/test.yml`)
+  - C.2 Cómo ejecutarlo
+  - C.3 yamllint
+  - C.4 ansible-lint
+- Parte D — Molecule: probar el playbook de test del rol
+  - D.1 Escenario `default` — VM de prueba en OpenShift
+  - D.2 Escenario `with_existing_machine` — VM del laboratorio
+  - D.3 Lanzar Molecule
 - Resumen de pasos (checklist)
 - Notas prácticas
 - Resultado esperado
 
-**Antes de pasar al ejercicio 3:** el rol vive en Git; el playbook lo declara en `requirements.yml` y lo instala con `ansible-galaxy` (sin copiar el árbol del rol en el repo del playbook).
+**Antes de pasar al ejercicio 3:** el rol vive en Git; el playbook del ejercicio 1 lo declara en `requirements.yml` y lo instala con `ansible-galaxy` (sin copiar el árbol del rol en el repo del playbook).
 
 ---
 
 ## Ejercicio 3 — Colecciones Ansible
 
 **Repositorio Git / workspace Dev Spaces:** `lab-devspaces-ansible-exercise3`  
-**Guía completa:** en ese workspace, `README.md` (castellano) o `README_EN.md` (inglés).
+**Guía completa:** en esa carpeta, `README.md` (castellano) o `README_EN.md` (inglés). También está más abajo en esta página.
 
 Una colección empaqueta módulos, roles, playbooks y tests bajo un espacio de nombres (`namespace_example.collection_example`). Recorre la plantilla y ejecuta `ansible-test`.
 
@@ -161,20 +174,24 @@ Una colección empaqueta módulos, roles, playbooks y tests bajo un espacio de n
   - Otras carpetas útiles para orientarse
 - Entorno (OpenShift Dev Spaces)
 - Pruebas con `ansible-test` y cobertura
+  - Instalar la colección
   - Sanidad (`sanity`)
   - Pruebas unitarias (`units`)
   - Pruebas de integración (`integration`)
+  - Playbook de ejemplo
   - Informes de cobertura de código
+- Resumen (checklist)
+- Resultado esperado
 - Referencias
 
-**Antes de pasar al ejercicio 4:** has localizado rol, módulo y tests en el árbol de la colección y has ejecutado al menos `ansible-test` (sanity y/o units) desde el directorio de `galaxy.yml`.
+**Antes de pasar al ejercicio 4:** has localizado rol, módulo y tests en el árbol de la colección y has ejecutado al menos `ansible-test` (sanity, units e integration) desde el directorio de `galaxy.yml`.
 
 ---
 
 ## Ejercicio 4 — Execution Environments
 
 **Repositorio Git / workspace Dev Spaces:** `lab-devspaces-ansible-exercise4`  
-**Guía completa:** en ese workspace, `README.md` (castellano) o `README_EN.md` (inglés).
+**Guía completa:** en esa carpeta, `README.md` (castellano) o `README_EN.md` (inglés). También está más abajo en esta página.
 
 Generas una imagen EE con `ansible-builder` y ejecutas playbooks con `ansible-navigator` desde Dev Spaces.
 
@@ -216,7 +233,7 @@ Generas una imagen EE con `ansible-builder` y ejecutas playbooks con `ansible-na
 **Opcional.** Solo si has **acabado los ejercicios 1 a 4**. No es una guía tutorizada: analizas requisitos y desarrollas la solución para demostrar lo aprendido de Ansible.
 
 **Repositorio Git / workspace Dev Spaces:** `lab-devspaces-ansible-exercise5`  
-**Guía completa:** en ese workspace, `README.md` (castellano) o `README_EN.md` (inglés).
+**Guía completa:** en esa carpeta, `README.md` (castellano) o `README_EN.md` (inglés). También está más abajo en esta página.
 
 En ese repositorio va el **código de una aplicación Hello World** (`hello-world-wildfly/`) para WildFly 39. El resto lo diseñáis vosotros sobre **vuestra colección** y un EE propio.
 
