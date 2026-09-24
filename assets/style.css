@@ -301,10 +301,17 @@ body::before {
   color: var(--accent);
 }
 
+.rocket-wrap {
+  position: relative;
+  display: inline-flex;
+  margin-left: 0.15rem;
+}
+
 .rocket {
-  width: 1.55rem;
-  height: 1.55rem;
+  width: 3.1rem;
+  height: 1.75rem;
   flex-shrink: 0;
+  transform: rotate(-8deg);
 }
 
 .hero-kicker {
@@ -348,6 +355,7 @@ body::before {
   font-size: 1.35rem;
   font-weight: 800;
   letter-spacing: -0.03em;
+  font-variant-numeric: slashed-zero;
 }
 
 .metric span {
@@ -370,7 +378,9 @@ body::before {
   inset: 8% 8% 8% 18%;
   border-radius: 6rem;
   background:
-    radial-gradient(circle at 42% 48%, #8ea0b5 0%, #4d5d73 38%, #2c3644 70%);
+    radial-gradient(circle at 28% 26%, rgba(255, 255, 255, 0.38) 0 10%, transparent 18%),
+    radial-gradient(circle at 62% 58%, rgba(21, 21, 21, 0.22) 0 8%, transparent 16%),
+    radial-gradient(circle at 46% 42%, #c5cdd6 0%, #7f8b99 42%, #3c4654 78%);
   box-shadow: inset 0 0 0 8px rgba(255, 255, 255, 0.08), 0 18px 40px rgba(21, 21, 21, 0.28);
 }
 
